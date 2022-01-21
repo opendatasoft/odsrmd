@@ -1,0 +1,408 @@
+---
+title: "flat_full.Rmd for working package"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+<!-- Run this 'development' chunk -->
+<!-- Store every call to library() that you need to explore your functions -->
+
+```{r development, include=FALSE}
+library(testthat)
+library(rmarkdown)
+
+library(rvest)
+library(glue)
+library(httr2)
+library(jsonlite)
+
+# Make your dataset file available to the current Rmd
+pkgload::load_all(path = here::here(), export_all = FALSE)
+```
+
+```{r}
+library(dplyr)
+```
+
+
+## get_body_and_style
+    
+```{r function-get_body_and_style}
+#' Get body and style
+#' 
+#' Extract the nodes corresponding to body and style without the script nodes.    
+#' 
+#' @param path Path to Rmd file. 
+#'
+#' @return A named list with two elements : body and style. 
+#' @importFrom rmarkdown render
+#' @importFrom rvest read_html html_elements html_text html_nodes
+#' @importFrom glue glue_collapse
+#' @importFrom magrittr %>%
+#' 
+#' @export 
+get_body_and_style <- function(path) {
+  render(path, output_format = "html_document", output_options = "self-contained", envir = new.env())
+
+  path_html <- gsub(pattern = ("[.]rmd|[.]Rmd"), replacement = ".html", x = path)
+
+  html_content <- read_html(path_html)
+  style <- html_elements(html_content, "style") %>%
+    html_text() %>%
+    glue_collapse()
+
+  body <- rvest::html_elements(html_content, "body>:not(script)") %>%
+    glue_collapse()
+
+  list(body = body, style = style)
+}
+```
+  
+```{r example-get_body_and_style}
+# Temporary directory for reproducible example
+dir_tmp <- tempfile(pattern = "proj-")
+dir.create(dir_tmp)
+
+file.copy(from = system.file("data/example_rmd.Rmd", package = "odsrmd"), to=dir_tmp)
+# browseURL(dir_tmp)
+path <- paste0(dir_tmp, "/example_rmd.Rmd")
+
+get_body_and_style(path)
+```
+  
+```{r tests-get_body_and_style}
+# Temporary directory for reproducible example
+dir_tmp <- tempfile(pattern = "proj-")
+dir.create(dir_tmp)
+
+file.copy(from = system.file("data/example_rmd.Rmd", package = "odsrmd"), to=dir_tmp)
+# browseURL(dir_tmp)
+path <- paste0(dir_tmp, "/example_rmd.Rmd")
+
+output <- get_body_and_style(path)
+
+test_that("get_body_and_style works", {
+  expect_true(inherits(get_body_and_style, "function"))
+  expect_type(output, "list")
+  expect_length(output, 2)
+})
+```
+
+
+
+## get_ods_page
+    
+```{r function-get_ods_page}
+#' Get ODS page
+#' 
+#' Get the content of an ODS page.   
+#' 
+#' @param page_slug Slug of the page. 
+#'
+#' @return A list object containing the information from the page. 
+#' @importFrom httr2 request req_auth_basic req_url_path_append req_user_agent req_perform resp_body_json
+#' 
+#' @export
+get_ods_page <- function(page_slug) {
+  ods_domain_id <- Sys.getenv("ODS_DOMAIN_ID")
+  ods_username <- Sys.getenv("ODS_USERNAME")
+  ods_password <- Sys.getenv("ODS_PASSWORD")
+
+  domain_url <- paste0("https://", ods_domain_id, ".opendatasoft.com/api/management/v2/")
+
+  resp <- request(domain_url) %>%
+    req_auth_basic(username = ods_username, password = ods_password) %>%
+    req_url_path_append("pages", page_slug) %>%
+    req_user_agent("R package odsrmd") %>%
+    req_error(body = api_error_body) %>%
+    req_perform()
+
+  resp %>% resp_body_json()
+}
+
+```
+  
+```{r example-get_ods_page}
+get_ods_page(page_slug = "test")
+
+```
+  
+```{r tests-get_ods_page}
+test_that("get_ods_page works", {
+  expect_true(inherits(get_ods_page, "function")) 
+})
+```
+  
+
+
+## create_json
+    
+```{r function-create_json}
+#' Create JSON element to send to ODS portal   
+#' 
+#' Modify list object coming from get_page and returns a JSON object. 
+#' 
+#' @param page_elements List object coming from get_page(). Contains the title, description, template, language, content, tags and level of restriction of the page. By default, if no value is provided to title, description, template, language, tags and restricted, create_json() takes the values available in page_elements.    
+#' @param body_and_style List object containing body and style of knitted Rmd document coming from get_body_and_css().     
+#' @param title A character string specifying the title of the page. 
+#' @param description A character string containing the description of the page. 
+#' @param template The template of the page. Default to "custom.html".
+#' @param language The language in which you would like to post the page. It should be one of the languages available on the Opendatasoft portal hosting the page.
+#' @param tags A list object of character strings containing the tags describing the page. 
+#' @param restricted A boolean TRUE/FALSE indicating the reading status of the page. TRUE will make the page "public" whereas FALSE will keep its access restricted to users who where granted the permission.    
+#'
+#' @return a JSON element  
+#' @importFrom jsonlite toJSON
+#' 
+#' @export
+create_json <- function(page_elements, body_and_style,
+                        title = NULL, description = NULL, template = NULL,
+                        language = NULL, tags = NULL, restricted = NULL) {
+  JSONlist <- list()
+
+    if (is.null(language)) {
+    language <- names(page_elements$content$html)[1]
+  }
+  
+  # Add title
+  if (is.null(title)) {
+    JSONlist$title[[language]] <- page_elements$title[[language]]
+  } else {
+    JSONlist$title[[language]] <- title
+  }
+
+  # Add description
+  if (is.null(description)) {
+    JSONlist$description <- page_elements$description
+  } else {
+    JSONlist$description <- description
+  }
+
+  # Add template
+
+  if (is.null(template)) {
+    JSONlist$template <- page_elements$template
+  } else {
+    JSONlist$template <- template
+  }
+
+  # Add content
+
+  JSONlist$content$html[[language]] <- body_and_style$body
+  JSONlist$content$css[[language]] <- body_and_style$style
+  # purrr::pluck(.x = page_elements, "content", "css", language) <- body_and_style$style
+
+  # Add tags
+  if (is.null(tags)) {
+    JSONlist$tags <- page_elements$tags
+  } else {
+    JSONlist$tags <- tags
+  }
+
+  # Add restricted
+  if (is.null(restricted)) {
+    JSONlist$restricted <- page_elements$restricted
+  } else {
+    JSONlist$restricted <- restricted
+  }
+
+  toJSON(JSONlist, auto_unbox = TRUE)
+}
+
+```
+  
+```{r example-create_json}
+# Temporary directory for reproducible example
+dir_tmp <- tempfile(pattern = "proj-")
+dir.create(dir_tmp)
+
+file.copy(from = system.file("data/example_rmd.Rmd", package = "odsrmd"), to=dir_tmp)
+# browseURL(dir_tmp)
+path <- paste0(dir_tmp, "/example_rmd.Rmd")
+
+body_and_style <- get_body_and_style(path)
+
+
+page_elements <- get_ods_page(page_slug = "test")
+
+create_json(page_elements, body_and_style, language = NULL, 
+                        title = NULL, description = NULL, template = NULL, 
+                        tags = NULL, restricted = NULL)
+```
+  
+```{r tests-create_json}
+test_that("create_json works", {
+  expect_true(inherits(create_json, "function")) 
+})
+```
+
+
+
+## api_error_body
+    
+```{r function-api_error_body}
+#' Extract message of body from response
+#'
+#' @param resp A response object. 
+#'
+#' @return The message part from the content-type header. 
+#' @importFrom httr2 resp_body_json
+#' @importFrom purrr map_chr pluck
+#' @noRd
+api_error_body <- function(resp) {
+  resp_tmp <- resp %>%
+    resp_body_json() 
+  
+  if (!is.null(resp_tmp$message)){
+    message <- resp_tmp$message
+  }else{
+    message <- ""
+  }
+  
+  if (!is.null(resp_tmp$error)){
+    error <- resp_tmp$error
+  }else{
+    error <- ""
+  }
+  
+  if (!is.null(resp_tmp$errors)){
+    
+    detailed_errors <- map_chr(length(resp_tmp$errors), function(x){
+      error_keys <- pluck(resp_tmp, "errors", 1, "error_key")
+      error_messages <- pluck(resp_tmp, "errors", 1, "message")
+      paste(error_keys, error_messages, sep = "\n")
+    }
+    )
+  }else{
+    detailed_errors <- ""
+  }
+  
+  paste(error, message, detailed_errors, sep = "\n")
+}
+```
+  
+```{r example-api_error_body}
+#' \dontrun{
+#' library(httr2)
+#' 
+#' ods_domain_id <- Sys.getenv("ODS_DOMAIN_ID")
+#' ods_username <- Sys.getenv("ODS_USERNAME")
+#' ods_password <- Sys.getenv("ODS_PASSWORD")
+#' 
+#' domain_url <- paste0("https://", ods_domain_id, ".opendatasoft.com/api/management/v2/")
+#' page_slug <- "test"
+#' 
+#' resp <- request(domain_url) %>%
+#'   req_auth_basic(username = ods_username, password = ods_password) %>%
+#'   req_url_path_append("p", page_slug) %>%
+#'   req_user_agent("R package odsrmd") %>%
+#'   req_perform()
+#' 
+#' api_error_body(last_response())
+#' }
+```
+  
+```{r tests-api_error_body}
+test_that("api_error_body works", {
+  expect_true(inherits(api_error_body, "function")) 
+})
+```
+  
+
+  
+## put_ods_page
+    
+```{r function-put_ods_page}
+#' Put ODS page
+#' 
+#' Send JSON element to an ODS page.  
+#' 
+#' @param page_slug  Slug of the page.
+#' @param json_to_send JSON object that will be send to the Opendatasoft portal and which information will be displayed on the page corresponding to the page slug.   
+#' @importFrom httr2 request req_auth_basic req_url_path_append req_user_agent req_method req_body_raw req_error req_perform req_options
+#'
+#' @return If request is successful (i.e. the request was successfully performed and a response with HTTP status code <400 was received), an HTTP response; otherwise throws an error. 
+#' 
+#' @export
+put_ods_page <- function(page_slug, json_to_send) {
+  ods_domain_id <- Sys.getenv("ODS_DOMAIN_ID")
+  ods_username <- Sys.getenv("ODS_USERNAME")
+  ods_password <- Sys.getenv("ODS_PASSWORD")
+  domain_url <- paste0("https://", ods_domain_id, ".opendatasoft.com/api/management/v2/")
+
+  resp <- request(domain_url) %>%
+    req_auth_basic(username = ods_username, password = ods_password) %>%
+    req_url_path_append("pages", page_slug) %>%
+    req_user_agent("R package odsrmd") %>%
+    req_method("PUT") %>%
+    req_body_raw(json_to_send) %>%
+    req_error(body = api_error_body) %>%
+    req_perform()
+
+  resp
+
+}
+
+```
+  
+```{r example-put_ods_page}
+
+# Temporary directory for reproducible example
+dir_tmp <- tempfile(pattern = "proj-")
+dir.create(dir_tmp)
+
+file.copy(from = system.file("data/example_rmd.Rmd", package = "odsrmd"), to=dir_tmp)
+# browseURL(dir_tmp)
+path <- paste0(dir_tmp, "/example_rmd.Rmd")
+
+body_and_style <- get_body_and_style(path)
+
+
+page_elements <- get_ods_page(page_slug = "test")
+
+json_to_send <- create_json(page_elements, body_and_style, language = NULL, 
+                        title = NULL, description = NULL, template = NULL, 
+                        tags = NULL, restricted = NULL)
+page_slug <- "test"
+
+put_ods_page(page_slug, json_to_send)
+
+
+```
+  
+```{r tests-put_ods_page}
+test_that("put_ods_page works", {
+  expect_true(inherits(put_ods_page, "function")) 
+})
+```
+  
+
+<!--
+# There can be development actions
+
+Create a chunk with 'development' actions
+
+- The chunk needs to be named `development` or `dev`
+- It contains functions that are used for package development only
+- Note that you may want to store most of these functions in the 0-dev_history.Rmd file
+
+These are only included in the present flat template file, their content will not be part of the package anywhere else.
+-->
+
+```{r development-inflate, eval=FALSE}
+# Keep eval=FALSE to avoid infinite loop in case you hit the knit button
+# Execute in the console directly
+fusen::inflate(flat_file = "dev/flat_full.Rmd", vignette_name = "Get started")
+```
+
+
+# Inflate your package
+
+You're one inflate from paper to box.
+Build your package from this very Rmd using `fusen::inflate()`
+
+- Verify your `"DESCRIPTION"` file has been updated
+- Verify your function is in `"R/"` directory
+- Verify your test is in `"tests/testthat/"` directory
+- Verify this Rmd appears in `"vignettes/"` directory
