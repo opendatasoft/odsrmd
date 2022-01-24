@@ -7,13 +7,13 @@
 get_ods_page(page_slug)
 }
 \arguments{
-\item{page_slug}{Slug of the page.}
+\item{page_slug}{Slug of the page (in the backoffice of the platform -> Pages -> New or existing page -> Properties -> Page URL).}
 }
 \value{
-A list object containing the information from the page.
+A list object containing the information from the page (title, description, tags...).
 }
 \description{
-Get the content of an ODS page.
+Get the content of a classic page from an Opendatasoft platform.
 }
 \examples{
 get_ods_page(page_slug = "test")

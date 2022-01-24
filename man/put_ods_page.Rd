@@ -7,15 +7,15 @@
 put_ods_page(page_slug, json_to_send)
 }
 \arguments{
-\item{page_slug}{Slug of the page.}
+\item{page_slug}{Slug of the page (in the backoffice of the platform -> Pages -> New or existing page -> Properties -> Page URL).}
 
-\item{json_to_send}{JSON object that will be send to the Opendatasoft portal and which information will be displayed on the page corresponding to the page slug.}
+\item{json_to_send}{JSON object containing page information, such as title, description, content and tags, that put_ods_page() sends on the page corresponding to the page slug.}
 }
 \value{
-If request is successful (i.e. the request was successfully performed and a response with HTTP status code <400 was received), an HTTP response; otherwise throws an error.
+If request is successful (i.e. the request was successfully performed and a response with HTTP status code <400 was received), an HTTP response; otherwise it throws an error.
 }
 \description{
-Send JSON element to an ODS page.
+Send JSON element to a page from an Opendatasoft platform.
 }
 \examples{
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/create_json.R
 \name{create_json}
 \alias{create_json}
-\title{Create JSON element to send to ODS portal}
+\title{Create JSON element to send to ODS platform.}
 \usage{
 create_json(
   page_elements,
@@ -16,27 +16,27 @@ create_json(
 )
 }
 \arguments{
-\item{page_elements}{List object coming from get_page(). Contains the title, description, template, language, content, tags and level of restriction of the page. By default, if no value is provided to title, description, template, language, tags and restricted, create_json() takes the values available in page_elements.}
+\item{page_elements}{List object from get_page(). Contains the title, description, template, language, content, tags and level of restriction of the page. By default, if no value is provided to title, description, template, language, tags and restricted, create_json() takes the values available in page_elements.}
 
-\item{body_and_style}{List object containing body and style of knitted Rmd document coming from get_body_and_css().}
+\item{body_and_style}{List object containing body and style of knitted Rmd document coming from get_body_and_style().}
 
-\item{title}{A character string specifying the title of the page.}
+\item{title}{A character string specifying the title of the page. If not null, overwrites title from page_elements.}
 
-\item{description}{A character string containing the description of the page.}
+\item{description}{A character string containing the description of the page. If not null, overwrites description from page_elements.}
 
-\item{template}{The template of the page. Default to "custom.html".}
+\item{template}{The template of the page. Default to "custom.html". If not null, overwrites template from page_elements.}
 
-\item{language}{The language in which you would like to post the page. It should be one of the languages available on the Opendatasoft portal hosting the page.}
+\item{language}{The language in which you would like to post the page. It should be one of the languages available on the Opendatasoft platform. hosting the page.}
 
-\item{tags}{A list object of character strings containing the tags describing the page.}
+\item{tags}{A list object of character strings containing the tags describing the page. If not null, overwrites tags from page_elements.}
 
-\item{restricted}{A boolean TRUE/FALSE indicating the reading status of the page. TRUE will make the page "public" whereas FALSE will keep its access restricted to users who where granted the permission.}
+\item{restricted}{A boolean TRUE/FALSE indicating the reading status of the page. TRUE will make the page "public" whereas FALSE will keep its access restricted to users who where granted the permission. If not null, overwrites reading status from page_elements.}
 }
 \value{
 a JSON element
 }
 \description{
-Modify list object coming from get_page and returns a JSON object.
+Combine information coming from the Opendatasoft page (with get_ods_page()) and the Rmarkdown document (with get_body_and_style()) into a JSON object ready to be sent back to the Opendatasoft platform.
 }
 \examples{
 # Temporary directory for reproducible example

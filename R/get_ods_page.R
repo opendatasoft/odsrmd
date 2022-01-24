@@ -2,12 +2,12 @@
 
 #' Get ODS page
 #' 
-#' Get the content of an ODS page.   
+#' Get the content of a classic page from an Opendatasoft platform.   
 #' 
-#' @param page_slug Slug of the page. 
+#' @param page_slug Slug of the page (in the backoffice of the platform -> Pages -> New or existing page -> Properties -> Page URL). 
 #'
-#' @return A list object containing the information from the page. 
-#' @importFrom httr2 request req_auth_basic req_url_path_append req_user_agent req_perform resp_body_json
+#' @return A list object containing the information from the page (title, description, tags...). 
+#' @importFrom httr2 request req_auth_basic req_url_path_append req_user_agent req_error req_perform resp_body_json
 #' 
 #' @export
 #' @examples

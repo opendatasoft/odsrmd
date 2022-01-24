@@ -7,13 +7,13 @@
 get_body_and_style(path)
 }
 \arguments{
-\item{path}{Path to Rmd file.}
+\item{path}{Path to the Rmd file.}
 }
 \value{
 A named list with two elements : body and style.
 }
 \description{
-Extract the nodes corresponding to body and style without the script nodes.
+Render Rmarkdown file as html file and extract the html nodes corresponding to body and style without the script nodes.
 }
 \examples{
 # Temporary directory for reproducible example

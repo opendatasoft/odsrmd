@@ -5,8 +5,6 @@ editor_options:
   chunk_output_type: console
 ---
 
-<!-- Run this 'development' chunk -->
-<!-- Store every call to library() that you need to explore your functions -->
 
 ```{r development, include=FALSE}
 library(testthat)
@@ -25,15 +23,22 @@ pkgload::load_all(path = here::here(), export_all = FALSE)
 library(dplyr)
 ```
 
+This vignette guides you through the procedure to display the content of an Rmarkdown file on a classic page from the Opendatasoft platform. Here we will take a simple Rmarkdown file, stored as example in the package {odsrmd}. You can prepare you own Rmarkdown file. Note that you can query data from your own platform using the [API version 2](https://help.opendatasoft.com/apis/ods-explore-v2/). 
 
+
+We assume that you have access to an Opendatasoft platform and have the rights to create and edit a page on the platform. As described in the README, you need to add the following environment variables to your Renviron file: `ODS_DOMAIN_ID`, `ODS_USERNAME` and `ODS_PASSWORD`. The `ODS_DOMAIN_ID` variable corresponds to the domain ID of your Opendatasoft domain. `ODS_USERNAME` and `ODS_PASSWORD` correspond respectively to your username and password to access the platform.        
+We also assume that you already created an empty classic page, for which the page URL (or page slug) is "test".
+    
 ## get_body_and_style
+    
+Here we render the Rmarkdown file as an .html file and extract the html the html nodes corresponding to body and style of the page. You cannot include scripts on a classic page from the Opendatasoft platform. Scripts nodes are removed from the html document and interactive libraries such as {plotly} or {highcharter} cannot be used here in the Rmarkdown document.     
     
 ```{r function-get_body_and_style}
 #' Get body and style
 #' 
-#' Extract the nodes corresponding to body and style without the script nodes.    
+#' Render Rmarkdown file as html file and extract the html nodes corresponding to body and style without the script nodes.    
 #' 
-#' @param path Path to Rmd file. 
+#' @param path Path to the Rmd file. 
 #'
 #' @return A named list with two elements : body and style. 
 #' @importFrom rmarkdown render
@@ -52,7 +57,7 @@ get_body_and_style <- function(path) {
     html_text() %>%
     glue_collapse()
 
-  body <- rvest::html_elements(html_content, "body>:not(script)") %>%
+  body <- html_elements(html_content, "body>:not(script)") %>%
     glue_collapse()
 
   list(body = body, style = style)
@@ -93,15 +98,20 @@ test_that("get_body_and_style works", {
 
 ## get_ods_page
     
+Here we assume that you have access to an Opendatasoft platform and have the rights to create and edit a page on the platform. We also assume that you added the `ODS_DOMAIN_ID`, `ODS_USERNAME` and `ODS_PASSWORD`environment variables to your Renviron file.   
+And we also assume that you already created an empty classic page on the platform, for which the page URL (or page slug) is "test".     
+
+The get_ods_page() function gets all pre-existing information of the page, such as its title, description, tags and current content. If no other information is provided, these elements will be re-used in create_json() to create the JSON object that will be sent back on the Opendatasoft platform using the put_ods_page() function.       
+
 ```{r function-get_ods_page}
 #' Get ODS page
 #' 
-#' Get the content of an ODS page.   
+#' Get the content of a classic page from an Opendatasoft platform.   
 #' 
-#' @param page_slug Slug of the page. 
+#' @param page_slug Slug of the page (in the backoffice of the platform -> Pages -> New or existing page -> Properties -> Page URL). 
 #'
-#' @return A list object containing the information from the page. 
-#' @importFrom httr2 request req_auth_basic req_url_path_append req_user_agent req_perform resp_body_json
+#' @return A list object containing the information from the page (title, description, tags...). 
+#' @importFrom httr2 request req_auth_basic req_url_path_append req_user_agent req_error req_perform resp_body_json
 #' 
 #' @export
 get_ods_page <- function(page_slug) {
@@ -137,20 +147,23 @@ test_that("get_ods_page works", {
 
 
 ## create_json
+
+Now we combine information coming from the Opendatasoft page (with get_ods_page()) and the Rmarkdown document (with get_body_and_style()) into a JSON object ready to be sent back to the Opendatasoft platform.     
+
     
 ```{r function-create_json}
-#' Create JSON element to send to ODS portal   
+#' Create JSON element to send to ODS platform.   
 #' 
-#' Modify list object coming from get_page and returns a JSON object. 
+#' Combine information coming from the Opendatasoft page (with get_ods_page()) and the Rmarkdown document (with get_body_and_style()) into a JSON object ready to be sent back to the Opendatasoft platform.
 #' 
-#' @param page_elements List object coming from get_page(). Contains the title, description, template, language, content, tags and level of restriction of the page. By default, if no value is provided to title, description, template, language, tags and restricted, create_json() takes the values available in page_elements.    
-#' @param body_and_style List object containing body and style of knitted Rmd document coming from get_body_and_css().     
-#' @param title A character string specifying the title of the page. 
-#' @param description A character string containing the description of the page. 
-#' @param template The template of the page. Default to "custom.html".
-#' @param language The language in which you would like to post the page. It should be one of the languages available on the Opendatasoft portal hosting the page.
-#' @param tags A list object of character strings containing the tags describing the page. 
-#' @param restricted A boolean TRUE/FALSE indicating the reading status of the page. TRUE will make the page "public" whereas FALSE will keep its access restricted to users who where granted the permission.    
+#' @param page_elements List object from get_page(). Contains the title, description, template, language, content, tags and level of restriction of the page. By default, if no value is provided to title, description, template, language, tags and restricted, create_json() takes the values available in page_elements.    
+#' @param body_and_style List object containing body and style of knitted Rmd document coming from get_body_and_style().     
+#' @param title A character string specifying the title of the page. If not null, overwrites title from page_elements. 
+#' @param description A character string containing the description of the page. If not null, overwrites description from page_elements. 
+#' @param template The template of the page. Default to "custom.html". If not null, overwrites template from page_elements. 
+#' @param language The language in which you would like to post the page. It should be one of the languages available on the Opendatasoft platform. hosting the page. 
+#' @param tags A list object of character strings containing the tags describing the page. If not null, overwrites tags from page_elements. 
+#' @param restricted A boolean TRUE/FALSE indicating the reading status of the page. TRUE will make the page "public" whereas FALSE will keep its access restricted to users who where granted the permission. If not null, overwrites reading status from page_elements.     
 #'
 #' @return a JSON element  
 #' @importFrom jsonlite toJSON
@@ -180,7 +193,6 @@ create_json <- function(page_elements, body_and_style,
   }
 
   # Add template
-
   if (is.null(template)) {
     JSONlist$template <- page_elements$template
   } else {
@@ -188,7 +200,6 @@ create_json <- function(page_elements, body_and_style,
   }
 
   # Add content
-
   JSONlist$content$html[[language]] <- body_and_style$body
   JSONlist$content$css[[language]] <- body_and_style$style
   # purrr::pluck(.x = page_elements, "content", "css", language) <- body_and_style$style
@@ -242,11 +253,11 @@ test_that("create_json works", {
 ## api_error_body
     
 ```{r function-api_error_body}
-#' Extract message of body from response
+#' Extract error messages and warnings sent by the API
 #'
 #' @param resp A response object. 
 #'
-#' @return The message part from the content-type header. 
+#' @return The message and error parts from the content-type header. 
 #' @importFrom httr2 resp_body_json
 #' @importFrom purrr map_chr pluck
 #' @noRd
@@ -312,17 +323,20 @@ test_that("api_error_body works", {
 
   
 ## put_ods_page
+
+
+put_ods_page() updates the content of the page on the Opendatasoft platform with a JSON object. It sends back an HTTP response if the request is successful, otherwise it throws an error.    
     
 ```{r function-put_ods_page}
 #' Put ODS page
 #' 
-#' Send JSON element to an ODS page.  
+#' Send JSON element to a page from an Opendatasoft platform.  
 #' 
-#' @param page_slug  Slug of the page.
-#' @param json_to_send JSON object that will be send to the Opendatasoft portal and which information will be displayed on the page corresponding to the page slug.   
+#' @param page_slug  Slug of the page (in the backoffice of the platform -> Pages -> New or existing page -> Properties -> Page URL).    
+#' @param json_to_send JSON object containing page information, such as title, description, content and tags, that put_ods_page() sends on the page corresponding to the page slug.     
 #' @importFrom httr2 request req_auth_basic req_url_path_append req_user_agent req_method req_body_raw req_error req_perform req_options
 #'
-#' @return If request is successful (i.e. the request was successfully performed and a response with HTTP status code <400 was received), an HTTP response; otherwise throws an error. 
+#' @return If request is successful (i.e. the request was successfully performed and a response with HTTP status code <400 was received), an HTTP response; otherwise it throws an error. 
 #' 
 #' @export
 put_ods_page <- function(page_slug, json_to_send) {
@@ -378,17 +392,7 @@ test_that("put_ods_page works", {
 ```
   
 
-<!--
-# There can be development actions
 
-Create a chunk with 'development' actions
-
-- The chunk needs to be named `development` or `dev`
-- It contains functions that are used for package development only
-- Note that you may want to store most of these functions in the 0-dev_history.Rmd file
-
-These are only included in the present flat template file, their content will not be part of the package anywhere else.
--->
 
 ```{r development-inflate, eval=FALSE}
 # Keep eval=FALSE to avoid infinite loop in case you hit the knit button
@@ -397,12 +401,3 @@ fusen::inflate(flat_file = "dev/flat_full.Rmd", vignette_name = "Get started")
 ```
 
 
-# Inflate your package
-
-You're one inflate from paper to box.
-Build your package from this very Rmd using `fusen::inflate()`
-
-- Verify your `"DESCRIPTION"` file has been updated
-- Verify your function is in `"R/"` directory
-- Verify your test is in `"tests/testthat/"` directory
-- Verify this Rmd appears in `"vignettes/"` directory

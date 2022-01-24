@@ -2,13 +2,13 @@
 
 #' Put ODS page
 #' 
-#' Send JSON element to an ODS page.  
+#' Send JSON element to a page from an Opendatasoft platform.  
 #' 
-#' @param page_slug  Slug of the page.
-#' @param json_to_send JSON object that will be send to the Opendatasoft portal and which information will be displayed on the page corresponding to the page slug.   
+#' @param page_slug  Slug of the page (in the backoffice of the platform -> Pages -> New or existing page -> Properties -> Page URL).    
+#' @param json_to_send JSON object containing page information, such as title, description, content and tags, that put_ods_page() sends on the page corresponding to the page slug.     
 #' @importFrom httr2 request req_auth_basic req_url_path_append req_user_agent req_method req_body_raw req_error req_perform req_options
 #'
-#' @return If request is successful (i.e. the request was successfully performed and a response with HTTP status code <400 was received), an HTTP response; otherwise throws an error. 
+#' @return If request is successful (i.e. the request was successfully performed and a response with HTTP status code <400 was received), an HTTP response; otherwise it throws an error. 
 #' 
 #' @export
 #' @examples

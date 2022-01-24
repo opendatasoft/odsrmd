@@ -84,3 +84,10 @@ json_to_send <- create_json(page_elements, body_and_style, language = NULL,
 # Send elements to the page on the Opendatasoft platform
 put_ods_page(page_slug, json_to_send)
 ```
+
+## Code of Conduct
+
+Please note that the odsrmd project is released with a [Contributor Code
+of
+Conduct](https://contributor-covenant.org/version/2/0/CODE_OF_CONDUCT.html).
+By contributing to this project, you agree to abide by its terms.

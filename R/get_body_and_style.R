@@ -2,9 +2,9 @@
 
 #' Get body and style
 #' 
-#' Extract the nodes corresponding to body and style without the script nodes.    
+#' Render Rmarkdown file as html file and extract the html nodes corresponding to body and style without the script nodes.    
 #' 
-#' @param path Path to Rmd file. 
+#' @param path Path to the Rmd file. 
 #'
 #' @return A named list with two elements : body and style. 
 #' @importFrom rmarkdown render
@@ -33,7 +33,7 @@ get_body_and_style <- function(path) {
     html_text() %>%
     glue_collapse()
 
-  body <- rvest::html_elements(html_content, "body>:not(script)") %>%
+  body <- html_elements(html_content, "body>:not(script)") %>%
     glue_collapse()
 
   list(body = body, style = style)
