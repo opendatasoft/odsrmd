@@ -20,7 +20,7 @@ Render Rmarkdown file as html file and extract the html nodes corresponding to b
 dir_tmp <- tempfile(pattern = "proj-")
 dir.create(dir_tmp)
 
-file.copy(from = system.file("data/example_rmd.Rmd", package = "odsrmd"), to=dir_tmp)
+file.copy(from = system.file("examples/example_rmd.Rmd", package = "odsrmd"), to=dir_tmp)
 # browseURL(dir_tmp)
 path <- paste0(dir_tmp, "/example_rmd.Rmd")
 

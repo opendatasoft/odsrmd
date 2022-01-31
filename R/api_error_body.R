@@ -55,5 +55,5 @@ api_error_body <- function(resp) {
     detailed_errors <- ""
   }
   
-  paste(error, message, detailed_errors, sep = "\n")
+  message(paste(error, message, detailed_errors, sep = "\n"))
 }

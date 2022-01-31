@@ -14,9 +14,38 @@
 #' get_ods_page(page_slug = "test")
 #' 
 get_ods_page <- function(page_slug) {
+  if (page_slug == "") {
+    stop(
+      "Please provide a unique page slug\n",
+      'With "", you are trying to query all pages at the same time!'
+    )
+  }
+
   ods_domain_id <- Sys.getenv("ODS_DOMAIN_ID")
   ods_username <- Sys.getenv("ODS_USERNAME")
   ods_password <- Sys.getenv("ODS_PASSWORD")
+
+  if (ods_domain_id == "") {
+    stop(
+      "The domain identifier of the Opendatasoft platform is missing.\n",
+      "Please add the environmental variable ODS_DOMAIN_ID to your .Renviron file with the corresponding domain identifier.\n",
+      "Reminder, your domain identifier is part of your domain URL : https://your_domain_ID.opendatasoft.com/"
+    )
+  }
+
+  if (ods_username == "") {
+    stop(
+      "Your username is missing.\n",
+      "Please add the environmental variable ODS_USERNAME to your .Renviron file with the corresponding username.\n"
+    )
+  }
+
+  if (ods_password == "") {
+    stop(
+      "Your password is missing.\n",
+      "Please add the environmental variable ODS_PASSWORD to your .Renviron file with the corresponding password\n"
+    )
+  }
 
   domain_url <- paste0("https://", ods_domain_id, ".opendatasoft.com/api/management/v2/")
 

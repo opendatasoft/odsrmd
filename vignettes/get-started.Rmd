@@ -29,6 +29,48 @@ This vignette guides you through the procedure to display the content of an Rmar
 
 We assume that you have access to an Opendatasoft platform and have the rights to create and edit a page on the platform. As described in the README, you need to add the following environment variables to your Renviron file: `ODS_DOMAIN_ID`, `ODS_USERNAME` and `ODS_PASSWORD`. The `ODS_DOMAIN_ID` variable corresponds to the domain ID of your Opendatasoft domain. `ODS_USERNAME` and `ODS_PASSWORD` correspond respectively to your username and password to access the platform.        
 We also assume that you already created an empty classic page, for which the page URL (or page slug) is "test".
+
+
+
+
+
+
+## api_error_body
+
+    
+
+  
+
+```{r example-api_error_body}
+#' \dontrun{
+#' library(httr2)
+#' 
+#' ods_domain_id <- Sys.getenv("ODS_DOMAIN_ID")
+#' ods_username <- Sys.getenv("ODS_USERNAME")
+#' ods_password <- Sys.getenv("ODS_PASSWORD")
+#' 
+#' domain_url <- paste0("https://", ods_domain_id, ".opendatasoft.com/api/management/v2/")
+#' page_slug <- "test"
+#' 
+#' resp <- request(domain_url) %>%
+#'   req_auth_basic(username = ods_username, password = ods_password) %>%
+#'   req_url_path_append("p", page_slug) %>%
+#'   req_user_agent("R package odsrmd") %>%
+#'   req_perform()
+#' 
+#' api_error_body(last_response())
+#' }
+```
+
+  
+
+  
+
+
+
+
+
+
     
 
 ## get_body_and_style
@@ -44,7 +86,7 @@ Here we render the Rmarkdown file as an .html file and extract the html the html
 dir_tmp <- tempfile(pattern = "proj-")
 dir.create(dir_tmp)
 
-file.copy(from = system.file("data/example_rmd.Rmd", package = "odsrmd"), to=dir_tmp)
+file.copy(from = system.file("examples/example_rmd.Rmd", package = "odsrmd"), to=dir_tmp)
 # browseURL(dir_tmp)
 path <- paste0(dir_tmp, "/example_rmd.Rmd")
 
@@ -88,7 +130,7 @@ Now we combine information coming from the Opendatasoft page (with get_ods_page(
 dir_tmp <- tempfile(pattern = "proj-")
 dir.create(dir_tmp)
 
-file.copy(from = system.file("data/example_rmd.Rmd", package = "odsrmd"), to=dir_tmp)
+file.copy(from = system.file("examples/example_rmd.Rmd", package = "odsrmd"), to=dir_tmp)
 # browseURL(dir_tmp)
 path <- paste0(dir_tmp, "/example_rmd.Rmd")
 
@@ -101,37 +143,6 @@ create_json(page_elements, body_and_style, language = NULL,
                         title = NULL, description = NULL, template = NULL, 
                         tags = NULL, restricted = NULL)
 ```
-
-  
-
-## api_error_body
-
-    
-
-  
-
-```{r example-api_error_body}
-#' \dontrun{
-#' library(httr2)
-#' 
-#' ods_domain_id <- Sys.getenv("ODS_DOMAIN_ID")
-#' ods_username <- Sys.getenv("ODS_USERNAME")
-#' ods_password <- Sys.getenv("ODS_PASSWORD")
-#' 
-#' domain_url <- paste0("https://", ods_domain_id, ".opendatasoft.com/api/management/v2/")
-#' page_slug <- "test"
-#' 
-#' resp <- request(domain_url) %>%
-#'   req_auth_basic(username = ods_username, password = ods_password) %>%
-#'   req_url_path_append("p", page_slug) %>%
-#'   req_user_agent("R package odsrmd") %>%
-#'   req_perform()
-#' 
-#' api_error_body(last_response())
-#' }
-```
-
-  
 
   
 
@@ -150,7 +161,7 @@ put_ods_page() updates the content of the page on the Opendatasoft platform with
 dir_tmp <- tempfile(pattern = "proj-")
 dir.create(dir_tmp)
 
-file.copy(from = system.file("data/example_rmd.Rmd", package = "odsrmd"), to=dir_tmp)
+file.copy(from = system.file("examples/example_rmd.Rmd", package = "odsrmd"), to=dir_tmp)
 # browseURL(dir_tmp)
 path <- paste0(dir_tmp, "/example_rmd.Rmd")
 
