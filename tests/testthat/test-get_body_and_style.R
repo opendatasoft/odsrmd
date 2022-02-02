@@ -14,4 +14,5 @@ test_that("get_body_and_style works", {
   expect_true(inherits(get_body_and_style, "function"))
   expect_type(output, "list")
   expect_length(output, 2)
+  expect_identical(names(output), c("body", "style"))
 })

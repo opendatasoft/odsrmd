@@ -1,0 +1,33 @@
+http_interactions:
+- request:
+    method: get
+    uri: http://httpbin.org/get
+    body:
+      encoding: ''
+      string: ''
+    headers:
+      Accept: application/json, text/xml, application/xml, */*
+  response:
+    status:
+      status_code: 200
+      category: Success
+      reason: OK
+      message: 'Success: (200) OK'
+    headers:
+      date: Wed, 02 Feb 2022 09:45:20 GMT
+      content-type: application/json
+      content-length: '367'
+      connection: keep-alive
+      server: gunicorn/19.9.0
+      access-control-allow-origin: '*'
+      access-control-allow-credentials: 'true'
+    body:
+      encoding: UTF-8
+      file: no
+      string: "{\n  \"args\": {}, \n  \"headers\": {\n    \"Accept\": \"application/json,
+        text/xml, application/xml, */*\", \n    \"Accept-Encoding\": \"deflate, gzip\",
+        \n    \"Host\": \"httpbin.org\", \n    \"User-Agent\": \"libcurl/7.77.0 r-curl/4.3.2
+        httr/1.4.2\", \n    \"X-Amzn-Trace-Id\": \"Root=1-61fa52b0-4c1746ff779a8b4a10aea919\"\n
+        \ }, \n  \"origin\": \"79.82.215.182\", \n  \"url\": \"http://httpbin.org/get\"\n}\n"
+  recorded_at: 2022-02-02 09:45:20 GMT
+  recorded_with: vcr/1.0.2, webmockr/0.8.0

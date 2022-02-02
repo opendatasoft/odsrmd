@@ -18,7 +18,6 @@ If request is successful (i.e. the request was successfully performed and a resp
 Send JSON element to a page from an Opendatasoft platform.
 }
 \examples{
-
 # Temporary directory for reproducible example
 dir_tmp <- tempfile(pattern = "proj-")
 dir.create(dir_tmp)

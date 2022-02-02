@@ -24,5 +24,5 @@ file.copy(from = system.file("examples/example_rmd.Rmd", package = "odsrmd"), to
 # browseURL(dir_tmp)
 path <- paste0(dir_tmp, "/example_rmd.Rmd")
 
-get_body_and_style(path)
+body_and_style <- get_body_and_style(path)
 }

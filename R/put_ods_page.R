@@ -12,7 +12,6 @@
 #' 
 #' @export
 #' @examples
-#' 
 #' # Temporary directory for reproducible example
 #' dir_tmp <- tempfile(pattern = "proj-")
 #' dir.create(dir_tmp)

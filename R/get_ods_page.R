@@ -11,7 +11,7 @@
 #' 
 #' @export
 #' @examples
-#' get_ods_page(page_slug = "test")
+#' page_elements <- get_ods_page(page_slug = "test")
 #' 
 get_ods_page <- function(page_slug) {
   if (page_slug == "") {

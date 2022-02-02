@@ -53,12 +53,13 @@ usethis::use_news_md()
 ```{r, eval=FALSE}
 usethis::use_lifecycle_badge("experimental")
 
-vcr::use_vcr()
-
-invisible(vcr::vcr_configure(
-  dir = vcr::vcr_test_path("fixtures")
-))
-vcr::check_cassette_names()
+# vcr is not available yet for httr2
+# vcr::use_vcr()
+# 
+# invisible(vcr::vcr_configure(
+#   dir = vcr::vcr_test_path("fixtures")
+# ))
+# vcr::check_cassette_names()
 ```
 
 

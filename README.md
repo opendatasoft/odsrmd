@@ -50,7 +50,6 @@ Be very careful to not display such information in a script and add the
 
 ``` r
 usethis::use_git_ignore(ignores = ".Renviron")
-#> ✓ Setting active project to '/Users/marion/Documents/Analytics/odsrmd'
 ```
 
 ## Example

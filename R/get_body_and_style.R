@@ -22,7 +22,7 @@
 #' # browseURL(dir_tmp)
 #' path <- paste0(dir_tmp, "/example_rmd.Rmd")
 #' 
-#' get_body_and_style(path)
+#' body_and_style <- get_body_and_style(path)
 get_body_and_style <- function(path) {
   render(path, output_format = "html_document", output_options = "self-contained", envir = new.env())
 

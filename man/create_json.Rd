@@ -52,7 +52,7 @@ body_and_style <- get_body_and_style(path)
 
 page_elements <- get_ods_page(page_slug = "test")
 
-create_json(page_elements, body_and_style, language = NULL, 
+json_to_send <- create_json(page_elements, body_and_style, language = NULL, 
                         title = NULL, description = NULL, template = NULL, 
                         tags = NULL, restricted = NULL)
 }
