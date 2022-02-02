@@ -24,7 +24,8 @@
 #' 
 #' body_and_style <- get_body_and_style(path)
 get_body_and_style <- function(path) {
-  render(path, output_format = "html_document", output_options = "self-contained", envir = new.env())
+  render(path, output_format = "html_document", output_options = "self-contained", 
+         envir = new.env(), quiet = TRUE)
 
   path_html <- gsub(pattern = ("[.]rmd|[.]Rmd"), replacement = ".html", x = path)
 
