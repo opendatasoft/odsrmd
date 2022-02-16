@@ -10,7 +10,7 @@ create_json(
   title = NULL,
   description = NULL,
   template = NULL,
-  language = NULL,
+  chosen_languages = "all",
   tags = NULL,
   restricted = NULL
 )
@@ -26,7 +26,7 @@ create_json(
 
 \item{template}{The template of the page. Default to "custom.html". If not null, overwrites template from page_elements.}
 
-\item{language}{The language in which you would like to post the page. It should be one of the languages available on the Opendatasoft platform. hosting the page.}
+\item{chosen_languages}{A character vector of languages in which the page should be updated. Default to "all", meaning all languages available on the platform.}
 
 \item{tags}{A list object of character strings containing the tags describing the page. If not null, overwrites tags from page_elements.}
 
@@ -43,16 +43,19 @@ Combine information coming from the Opendatasoft page (with get_ods_page()) and 
 dir_tmp <- tempfile(pattern = "proj-")
 dir.create(dir_tmp)
 
-file.copy(from = system.file("examples/example_rmd.Rmd", package = "odsrmd"), to=dir_tmp)
+file.copy(from = system.file("examples/example_rmd.Rmd", package = "odsrmd"), to = dir_tmp)
 # browseURL(dir_tmp)
 path <- paste0(dir_tmp, "/example_rmd.Rmd")
+page_slug <- "testthat-odsrmd"
+
 
 body_and_style <- get_body_and_style(path)
 
+page_elements <- get_ods_page(page_slug)
 
-page_elements <- get_ods_page(page_slug = "test")
-
-json_to_send <- create_json(page_elements, body_and_style, language = NULL, 
-                        title = NULL, description = NULL, template = NULL, 
-                        tags = NULL, restricted = NULL)
+json_to_send <- create_json(page_elements, body_and_style,
+  chosen_languages = "all",
+  title = NULL, description = NULL, template = NULL,
+  tags = NULL, restricted = NULL
+)
 }

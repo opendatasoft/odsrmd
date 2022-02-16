@@ -4,21 +4,34 @@
 dir_tmp <- tempfile(pattern = "proj-")
 dir.create(dir_tmp)
 
-file.copy(from = system.file("examples/example_rmd.Rmd", package = "odsrmd"), to=dir_tmp)
+file.copy(from = system.file("examples/example_rmd.Rmd", package = "odsrmd"), to = dir_tmp)
 # browseURL(dir_tmp)
 path <- paste0(dir_tmp, "/example_rmd.Rmd")
+page_slug <- "testthat-odsrmd"
+
 
 body_and_style <- get_body_and_style(path)
 
+page_elements <- get_ods_page(page_slug)
 
-page_elements <- get_ods_page(page_slug = "test")
-
-json_to_send <- create_json(page_elements, body_and_style, language = NULL, 
-                        title = NULL, description = NULL, template = NULL, 
-                        tags = NULL, restricted = NULL)
+json_to_send <- create_json(page_elements, body_and_style,
+  chosen_languages = "all",
+  title = NULL, description = NULL, template = NULL,
+  tags = NULL, restricted = NULL
+)
 
 test_that("create_json works", {
-  expect_true(inherits(create_json, "function")) 
+  expect_true(inherits(create_json, "function"))
   expect_type(json_to_send, "character")
   expect_is(json_to_send, "json")
+  expect_error(create_json(page_elements, body_and_style,
+    chosen_languages = "",
+    title = NULL, description = NULL, template = NULL,
+    tags = NULL, restricted = NULL
+  ))
+  expect_message(create_json(page_elements, body_and_style,
+    chosen_languages = "all",
+    title = NULL, description = NULL, template = NULL,
+    tags = NULL, restricted = NULL
+  ))
 })

@@ -9,12 +9,14 @@
 #' @param title A character string specifying the title of the page. If not null, overwrites title from page_elements. 
 #' @param description A character string containing the description of the page. If not null, overwrites description from page_elements. 
 #' @param template The template of the page. Default to "custom.html". If not null, overwrites template from page_elements. 
-#' @param language The language in which you would like to post the page. It should be one of the languages available on the Opendatasoft platform. hosting the page. 
+#' @param chosen_languages A character vector of languages in which the page should be updated. Default to "all", meaning all languages available on the platform. 
 #' @param tags A list object of character strings containing the tags describing the page. If not null, overwrites tags from page_elements. 
 #' @param restricted A boolean TRUE/FALSE indicating the reading status of the page. TRUE will make the page "public" whereas FALSE will keep its access restricted to users who where granted the permission. If not null, overwrites reading status from page_elements.     
 #'
 #' @return a JSON element  
 #' @importFrom jsonlite toJSON
+#' @importFrom glue glue_collapse glue
+#' @importFrom purrr modify_at
 #' 
 #' @export
 #' @examples
@@ -22,33 +24,84 @@
 #' dir_tmp <- tempfile(pattern = "proj-")
 #' dir.create(dir_tmp)
 #' 
-#' file.copy(from = system.file("examples/example_rmd.Rmd", package = "odsrmd"), to=dir_tmp)
+#' file.copy(from = system.file("examples/example_rmd.Rmd", package = "odsrmd"), to = dir_tmp)
 #' # browseURL(dir_tmp)
 #' path <- paste0(dir_tmp, "/example_rmd.Rmd")
+#' page_slug <- "testthat-odsrmd"
+#' 
 #' 
 #' body_and_style <- get_body_and_style(path)
 #' 
+#' page_elements <- get_ods_page(page_slug)
 #' 
-#' page_elements <- get_ods_page(page_slug = "test")
-#' 
-#' json_to_send <- create_json(page_elements, body_and_style, language = NULL, 
-#'                         title = NULL, description = NULL, template = NULL, 
-#'                         tags = NULL, restricted = NULL)
+#' json_to_send <- create_json(page_elements, body_and_style,
+#'   chosen_languages = "all",
+#'   title = NULL, description = NULL, template = NULL,
+#'   tags = NULL, restricted = NULL
+#' )
 create_json <- function(page_elements, body_and_style,
                         title = NULL, description = NULL, template = NULL,
-                        language = NULL, tags = NULL, restricted = NULL) {
-  JSONlist <- list()
+                        chosen_languages = "all", tags = NULL, restricted = NULL) {
+  if (length(chosen_languages) != 1 || chosen_languages != "all") {
+    for (l in chosen_languages) {
+      is_available(l, page_elements)
+    }
+  }
 
-    if (is.null(language)) {
-    language <- names(page_elements$content$html)[1]
-  }
-  
-  # Add title
-  if (is.null(title)) {
-    JSONlist$title[[language]] <- page_elements$title[[language]]
+  available_languages <- get_languages(page_elements)
+  chosen_languages_list <- glue_collapse(chosen_languages, sep = ", ") %>% toupper()
+  message(glue("Chosen languages: {chosen_languages_list}."))
+
+  language_list <- Map(function(x) NULL, available_languages)
+
+  JSONlist <- list(
+    title = language_list,
+    description = NULL,
+    template = NULL,
+    content = list(
+      "html" = language_list,
+      "css" = language_list
+    ),
+    tags = NULL,
+    restricted = NULL
+  )
+
+
+  if (length(chosen_languages) == 1 && chosen_languages == "all") {
+    language <- available_languages # modify content for all languages
+    ignored_languages <- NULL
   } else {
-    JSONlist$title[[language]] <- title
+    language <- tolower(chosen_languages) # modify content for some languages, others keep page_elements
+    ignored_languages <- setdiff(available_languages, chosen_languages)
   }
+
+
+
+  # Add title
+  if (is.null(title)) { # no change of title
+    if (length(page_elements$title) != 0) { # Some titles exist on the platform, but not necessarily for all languages
+      for (l in available_languages) {
+        if (!is.null(page_elements$title[[l]])) {
+          JSONlist$title <- modify_at(JSONlist$title, .at = l, ~ page_elements$title[[l]])
+        } else {
+          JSONlist$title <- modify_at(JSONlist$title, .at = l, ~"")
+        }
+      }
+    } else { # No title on the platform and no title defined by the user
+      JSONlist$title <- modify_at(JSONlist$title, .at = available_languages, ~"")
+    }
+  } else { # change of title for chosen languages
+    JSONlist$title <- modify_at(JSONlist$title, .at = language, ~title)
+    # other languages inherit from page_elements
+    for (l in ignored_languages) {
+      if (!is.null(page_elements$title[[l]])) {
+        JSONlist$title <- modify_at(JSONlist$title, .at = l, ~ page_elements$title[[l]])
+      } else {
+        JSONlist$title <- modify_at(JSONlist$title, .at = l, ~"")
+      }
+    }
+  }
+
 
   # Add description
   if (is.null(description)) {
@@ -65,9 +118,15 @@ create_json <- function(page_elements, body_and_style,
   }
 
   # Add content
-  JSONlist$content$html[[language]] <- body_and_style$body
-  JSONlist$content$css[[language]] <- body_and_style$style
-  # purrr::pluck(.x = page_elements, "content", "css", language) <- body_and_style$style
+  JSONlist$content$html <- modify_at(JSONlist$content$html, .at = language, ~ body_and_style$body)
+  for (l in ignored_languages) {
+    JSONlist$content$html <- modify_at(JSONlist$content$html, .at = l, ~ page_elements$content$html[[l]])
+  }
+
+  JSONlist$content$css <- modify_at(JSONlist$content$css, .at = language, ~ body_and_style$style)
+  for (l in ignored_languages) {
+    JSONlist$content$css <- modify_at(JSONlist$content$css, .at = l, ~ page_elements$content$css[[l]])
+  }
 
   # Add tags
   if (is.null(tags)) {

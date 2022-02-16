@@ -7,16 +7,16 @@ dir.create(dir_tmp)
 file.copy(from = system.file("examples/example_rmd.Rmd", package = "odsrmd"), to=dir_tmp)
 # browseURL(dir_tmp)
 path <- paste0(dir_tmp, "/example_rmd.Rmd")
+page_slug <- "testthat-odsrmd"
+
 
 body_and_style <- get_body_and_style(path)
 
+page_elements <- get_ods_page(page_slug)
 
-page_elements <- get_ods_page(page_slug = "test")
-
-json_to_send <- create_json(page_elements, body_and_style, language = NULL, 
+json_to_send <- create_json(page_elements, body_and_style, chosen_languages = NULL, 
                         title = NULL, description = NULL, template = NULL, 
                         tags = NULL, restricted = NULL)
-page_slug <- "test"
 
 resp <- put_ods_page(page_slug, json_to_send)
 

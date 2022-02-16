@@ -17,7 +17,7 @@
 #' ods_password <- Sys.getenv("ODS_PASSWORD")
 #' 
 #' domain_url <- paste0("https://", ods_domain_id, ".opendatasoft.com/api/management/v2/")
-#' page_slug <- "test"
+#' page_slug <- "testthat-odsrmd"
 #' 
 #' resp <- request(domain_url) %>%
 #'   req_auth_basic(username = ods_username, password = ods_password) %>%
