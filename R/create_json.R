@@ -4,11 +4,10 @@
 #' 
 #' Combine information coming from the Opendatasoft page (with get_ods_page()) and the Rmarkdown document (with get_body_and_style()) into a JSON object ready to be sent back to the Opendatasoft platform.
 #' 
-#' @param page_elements List object from get_page(). Contains the title, description, template, language, content, tags and level of restriction of the page. By default, if no value is provided to title, description, template, language, tags and restricted, create_json() takes the values available in page_elements.    
+#' @param page_elements List object from get_page(). Contains the title, description, template, language, content, tags and level of restriction of the page. By default in create_json(), if no value is provided to title, description, tags and restricted, create_json() takes the values available in page_elements.    
 #' @param body_and_style List object containing body and style of knitted Rmd document coming from get_body_and_style().     
 #' @param title A character string specifying the title of the page. If not null, overwrites title from page_elements. 
 #' @param description A character string containing the description of the page. If not null, overwrites description from page_elements. 
-#' @param template The template of the page. Default to "custom.html". If not null, overwrites template from page_elements. 
 #' @param chosen_languages A character vector of languages in which the page should be updated. Default to "all", meaning all languages available on the platform. 
 #' @param tags A list object of character strings containing the tags describing the page. If not null, overwrites tags from page_elements. 
 #' @param restricted A boolean TRUE/FALSE indicating the reading status of the page. TRUE will make the page "public" whereas FALSE will keep its access restricted to users who where granted the permission. If not null, overwrites reading status from page_elements.     
@@ -36,11 +35,11 @@
 #' 
 #' json_to_send <- create_json(page_elements, body_and_style,
 #'   chosen_languages = "all",
-#'   title = NULL, description = NULL, template = NULL,
+#'   title = NULL, description = NULL,
 #'   tags = NULL, restricted = NULL
 #' )
 create_json <- function(page_elements, body_and_style,
-                        title = NULL, description = NULL, template = NULL,
+                        title = NULL, description = NULL, 
                         chosen_languages = "all", tags = NULL, restricted = NULL) {
   if (length(chosen_languages) != 1 || chosen_languages != "all") {
     for (l in chosen_languages) {
@@ -57,7 +56,7 @@ create_json <- function(page_elements, body_and_style,
   JSONlist <- list(
     title = language_list,
     description = NULL,
-    template = NULL,
+    template = page_elements$template,
     content = list(
       "html" = language_list,
       "css" = language_list
@@ -110,12 +109,6 @@ create_json <- function(page_elements, body_and_style,
     JSONlist$description <- description
   }
 
-  # Add template
-  if (is.null(template)) {
-    JSONlist$template <- page_elements$template
-  } else {
-    JSONlist$template <- template
-  }
 
   # Add content
   JSONlist$content$html <- modify_at(JSONlist$content$html, .at = language, ~ body_and_style$body)

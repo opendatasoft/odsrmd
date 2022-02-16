@@ -9,22 +9,19 @@ create_json(
   body_and_style,
   title = NULL,
   description = NULL,
-  template = NULL,
   chosen_languages = "all",
   tags = NULL,
   restricted = NULL
 )
 }
 \arguments{
-\item{page_elements}{List object from get_page(). Contains the title, description, template, language, content, tags and level of restriction of the page. By default, if no value is provided to title, description, template, language, tags and restricted, create_json() takes the values available in page_elements.}
+\item{page_elements}{List object from get_page(). Contains the title, description, template, language, content, tags and level of restriction of the page. By default in create_json(), if no value is provided to title, description, tags and restricted, create_json() takes the values available in page_elements.}
 
 \item{body_and_style}{List object containing body and style of knitted Rmd document coming from get_body_and_style().}
 
 \item{title}{A character string specifying the title of the page. If not null, overwrites title from page_elements.}
 
 \item{description}{A character string containing the description of the page. If not null, overwrites description from page_elements.}
-
-\item{template}{The template of the page. Default to "custom.html". If not null, overwrites template from page_elements.}
 
 \item{chosen_languages}{A character vector of languages in which the page should be updated. Default to "all", meaning all languages available on the platform.}
 
@@ -55,7 +52,7 @@ page_elements <- get_ods_page(page_slug)
 
 json_to_send <- create_json(page_elements, body_and_style,
   chosen_languages = "all",
-  title = NULL, description = NULL, template = NULL,
+  title = NULL, description = NULL,
   tags = NULL, restricted = NULL
 )
 }

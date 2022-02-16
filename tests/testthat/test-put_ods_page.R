@@ -15,7 +15,7 @@ body_and_style <- get_body_and_style(path)
 page_elements <- get_ods_page(page_slug)
 
 json_to_send <- create_json(page_elements, body_and_style, chosen_languages = NULL, 
-                        title = NULL, description = NULL, template = NULL, 
+                        title = NULL, description = NULL,  
                         tags = NULL, restricted = NULL)
 
 resp <- put_ods_page(page_slug, json_to_send)

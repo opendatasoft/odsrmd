@@ -16,7 +16,7 @@ page_elements <- get_ods_page(page_slug)
 
 json_to_send <- create_json(page_elements, body_and_style,
   chosen_languages = "all",
-  title = NULL, description = NULL, template = NULL,
+  title = NULL, description = NULL, 
   tags = NULL, restricted = NULL
 )
 
@@ -26,12 +26,12 @@ test_that("create_json works", {
   expect_is(json_to_send, "json")
   expect_error(create_json(page_elements, body_and_style,
     chosen_languages = "",
-    title = NULL, description = NULL, template = NULL,
+    title = NULL, description = NULL, 
     tags = NULL, restricted = NULL
   ))
   expect_message(create_json(page_elements, body_and_style,
     chosen_languages = "all",
-    title = NULL, description = NULL, template = NULL,
+    title = NULL, description = NULL, 
     tags = NULL, restricted = NULL
   ))
 })
