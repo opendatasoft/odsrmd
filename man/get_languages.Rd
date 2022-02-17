@@ -9,7 +9,7 @@ get_languages(page_elements, verbose = TRUE)
 \arguments{
 \item{page_elements}{List object from get_page(). Contains the title, description, template, language, content, tags and level of restriction of the page.}
 
-\item{verbose}{A boolean TRUE/FALSE indicating if the function should output a message listing the languages available on the platform.}
+\item{verbose}{A logical TRUE/FALSE indicating if the function should output a message listing the languages available on the platform.}
 }
 \value{
 A vector of characters.

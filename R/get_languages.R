@@ -5,7 +5,7 @@
 #' Retrieve all languages available on the ODS platform from the information contained in page_elements.
 #' 
 #' @param page_elements List object from get_page(). Contains the title, description, template, language, content, tags and level of restriction of the page. 
-#' @param verbose A boolean TRUE/FALSE indicating if the function should output a message listing the languages available on the platform.   
+#' @param verbose A logical TRUE/FALSE indicating if the function should output a message listing the languages available on the platform.   
 #'
 #' @return A vector of characters. 
 #' @importFrom glue glue_collapse glue

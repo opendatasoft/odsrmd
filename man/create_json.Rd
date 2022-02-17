@@ -27,7 +27,7 @@ create_json(
 
 \item{tags}{A list object of character strings containing the tags describing the page. If not null, overwrites tags from page_elements.}
 
-\item{restricted}{A boolean TRUE/FALSE indicating the reading status of the page. TRUE will make the page "public" whereas FALSE will keep its access restricted to users who where granted the permission. If not null, overwrites reading status from page_elements.}
+\item{restricted}{A logical TRUE/FALSE indicating the reading status of the page. TRUE will make the page "public" whereas FALSE will keep its access restricted to users who where granted the permission. If not null, overwrites reading status from page_elements.}
 }
 \value{
 a JSON element

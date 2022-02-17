@@ -10,7 +10,7 @@
 #' @param description A character string containing the description of the page. If not null, overwrites description from page_elements. 
 #' @param chosen_languages A character vector of languages in which the page should be updated. Default to "all", meaning all languages available on the platform. 
 #' @param tags A list object of character strings containing the tags describing the page. If not null, overwrites tags from page_elements. 
-#' @param restricted A boolean TRUE/FALSE indicating the reading status of the page. TRUE will make the page "public" whereas FALSE will keep its access restricted to users who where granted the permission. If not null, overwrites reading status from page_elements.     
+#' @param restricted A logical TRUE/FALSE indicating the reading status of the page. TRUE will make the page "public" whereas FALSE will keep its access restricted to users who where granted the permission. If not null, overwrites reading status from page_elements.     
 #'
 #' @return a JSON element  
 #' @importFrom jsonlite toJSON
@@ -39,8 +39,78 @@
 #'   tags = NULL, restricted = NULL
 #' )
 create_json <- function(page_elements, body_and_style,
-                        title = NULL, description = NULL, 
+                        title = NULL, description = NULL,
                         chosen_languages = "all", tags = NULL, restricted = NULL) {
+
+  # type of page_elements : list of length 13 (check names of elements required)
+  if (typeof(page_elements) != "list") {
+    stop(
+      "page_elements must be a list."
+    )
+  }
+
+  if (length(page_elements) != 13) {
+    stop(
+      "page_elements must be of length 2."
+    )
+  }
+
+  if (!"title" %in% names(page_elements) || !"description" %in% names(page_elements) || !"content" %in% names(page_elements) || !"tags" %in% names(page_elements) || !"restricted" %in% names(page_elements)) {
+    stop(
+      "page_elements must be a named list containing the following elements: title, description, content, tags and restricted."
+    )
+  }
+
+  # type of body_and_style : list of length 2 (body and style)
+  if (typeof(body_and_style) != "list") {
+    stop(
+      "body_and_style must be a list."
+    )
+  }
+
+  if (length(body_and_style) != 2) {
+    stop(
+      "body_and_style must be of length 2."
+    )
+  }
+
+  if (!identical(names(body_and_style), c("body", "style"))) {
+    stop(
+      "body_and_style must be a named list with two elements named 'body' and 'style'."
+    )
+  }
+
+  # type of title : null or character
+  if (typeof(title) != "NULL" && typeof(title) != "character") {
+    stop(
+      "title must be either NULL or character."
+    )
+  }
+  # type of description : null or character
+  if (typeof(description) != "NULL" && typeof(description) != "character") {
+    stop(
+      "description must be either NULL or character."
+    )
+  }
+  # type of chosen_languages : character
+  if (typeof(chosen_languages) != "character") {
+    stop(
+      "chosen_languages must a character string."
+    )
+  }
+  # type of tags : null or character
+  if (typeof(tags) != "NULL" && typeof(tags) != "character") {
+    stop(
+      "tags must be either NULL or character."
+    )
+  }
+  # type of restricted : null or logical
+  if (typeof(restricted) != "NULL" && typeof(restricted) != "logical") {
+    stop(
+      "restricted must be either NULL or logical."
+    )
+  }
+
   if (length(chosen_languages) != 1 || chosen_languages != "all") {
     for (l in chosen_languages) {
       is_available(l, page_elements)
@@ -73,7 +143,6 @@ create_json <- function(page_elements, body_and_style,
     language <- tolower(chosen_languages) # modify content for some languages, others keep page_elements
     ignored_languages <- setdiff(available_languages, chosen_languages)
   }
-
 
 
   # Add title
@@ -121,6 +190,7 @@ create_json <- function(page_elements, body_and_style,
     JSONlist$content$css <- modify_at(JSONlist$content$css, .at = l, ~ page_elements$content$css[[l]])
   }
 
+  
   # Add tags
   if (is.null(tags)) {
     JSONlist$tags <- page_elements$tags
@@ -128,6 +198,7 @@ create_json <- function(page_elements, body_and_style,
     JSONlist$tags <- tags
   }
 
+  
   # Add restricted
   if (is.null(restricted)) {
     JSONlist$restricted <- page_elements$restricted
