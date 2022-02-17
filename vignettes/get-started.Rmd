@@ -231,6 +231,30 @@ put_ods_page(page_slug, json_to_send)
 
   
 
+## update_ods_page
+
+    
+
+  
+
+```{r example-update_ods_page}
+# Temporary directory for reproducible example
+dir_tmp <- tempfile(pattern = "proj-")
+dir.create(dir_tmp)
+
+file.copy(from = system.file("examples/example_rmd.Rmd", package = "odsrmd"), to = dir_tmp)
+# browseURL(dir_tmp)
+path <- paste0(dir_tmp, "/example_rmd.Rmd")
+page_slug <- "testthat-odsrmd"
+
+update_ods_page(path, page_slug, chosen_languages = "all", title = NULL,
+  description = NULL, tags = NULL, restricted = NULL
+)
+```
+
+  
+
+  
 
 
 

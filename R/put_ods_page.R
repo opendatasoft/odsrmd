@@ -35,10 +35,15 @@
 #' 
 #' 
 put_ods_page <- function(page_slug, json_to_send) {
-  
   if (page_slug == "") {
     stop(
       "Please provide a valid page slug."
+    )
+  }
+
+  if (class(json_to_send) != "json") {
+    stop(
+      "json_to_send must be of class 'json'."
     )
   }
 
@@ -81,6 +86,5 @@ put_ods_page <- function(page_slug, json_to_send) {
     req_perform()
 
   resp
-
 }
 
