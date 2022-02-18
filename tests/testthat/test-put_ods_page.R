@@ -5,6 +5,7 @@ dir_tmp <- tempfile(pattern = "proj-")
 dir.create(dir_tmp)
 
 file.copy(from = system.file("examples/example_rmd.Rmd", package = "odsrmd"), to=dir_tmp)
+file.copy(from = system.file("examples/style.css", package = "odsrmd"), to=dir_tmp)
 # browseURL(dir_tmp)
 path <- paste0(dir_tmp, "/example_rmd.Rmd")
 page_slug <- "testthat-odsrmd"

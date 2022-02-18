@@ -7,6 +7,7 @@
 update_ods_page(
   path,
   page_slug,
+  add_extra_css = "no",
   chosen_languages = "all",
   title = NULL,
   description = NULL,
@@ -18,6 +19,8 @@ update_ods_page(
 \item{path}{Path to the Rmd file.}
 
 \item{page_slug}{Slug of the page (in the backoffice of the platform -> Pages -> New or existing page -> Properties -> Page URL).}
+
+\item{add_extra_css}{Add css files listed in Rmarkdown yaml (output: html_document: css: ...). Default to "no" to not add extra css files. The option "append" adds the content of the css file(s) to the default Rmd style. The option "replace" replaces the default Rmd style by the content of the css file(s).}
 
 \item{chosen_languages}{A character vector of languages in which the page should be updated. Default to "all", meaning all languages available on the platform.}
 
@@ -41,11 +44,12 @@ dir_tmp <- tempfile(pattern = "proj-")
 dir.create(dir_tmp)
 
 file.copy(from = system.file("examples/example_rmd.Rmd", package = "odsrmd"), to = dir_tmp)
+file.copy(from = system.file("examples/style.css", package = "odsrmd"), to=dir_tmp)
 # browseURL(dir_tmp)
 path <- paste0(dir_tmp, "/example_rmd.Rmd")
 page_slug <- "testthat-odsrmd"
 
-update_ods_page(path, page_slug, chosen_languages = "all", title = NULL,
+update_ods_page(path, page_slug, add_extra_css = "no", chosen_languages = "all", title = NULL,
   description = NULL, tags = NULL, restricted = NULL
 )
 }

@@ -73,7 +73,30 @@ We also assume that you already created an empty classic page, for which the pag
 
   
 
+<!-- add_css -->
+    
 
+  
+
+```{r example-add_css}
+#' \dontrun{
+#' # Temporary directory for reproducible example
+#'
+#' dir_tmp <- tempfile(pattern = "proj-")
+#' dir.create(dir_tmp)
+#'
+#' file.copy(from = system.file("examples/example_rmd.Rmd", package = "odsrmd"), to=dir_tmp)
+#' file.copy(from = system.file("examples/style.css", package = "odsrmd"), to=dir_tmp)
+#' # browseURL(dir_tmp)
+#' path <- paste0(dir_tmp, "/example_rmd.Rmd")
+#'
+#' add_css(path)
+#' }
+```
+
+  
+
+  
 
 
 
@@ -93,11 +116,12 @@ Here we render the Rmarkdown file as an .html file and extract the html the html
 dir_tmp <- tempfile(pattern = "proj-")
 dir.create(dir_tmp)
 
-file.copy(from = system.file("examples/example_rmd.Rmd", package = "odsrmd"), to=dir_tmp)
+file.copy(from = system.file("examples/example_rmd.Rmd", package = "odsrmd"), to = dir_tmp)
+file.copy(from = system.file("examples/style.css", package = "odsrmd"), to = dir_tmp)
 # browseURL(dir_tmp)
 path <- paste0(dir_tmp, "/example_rmd.Rmd")
 
-body_and_style <- get_body_and_style(path)
+body_and_style <- get_body_and_style(path, add_extra_css = "no")
 ```
 
   
@@ -175,6 +199,7 @@ dir_tmp <- tempfile(pattern = "proj-")
 dir.create(dir_tmp)
 
 file.copy(from = system.file("examples/example_rmd.Rmd", package = "odsrmd"), to = dir_tmp)
+file.copy(from = system.file("examples/style.css", package = "odsrmd"), to=dir_tmp)
 # browseURL(dir_tmp)
 path <- paste0(dir_tmp, "/example_rmd.Rmd")
 page_slug <- "testthat-odsrmd"
@@ -208,6 +233,7 @@ dir_tmp <- tempfile(pattern = "proj-")
 dir.create(dir_tmp)
 
 file.copy(from = system.file("examples/example_rmd.Rmd", package = "odsrmd"), to=dir_tmp)
+file.copy(from = system.file("examples/style.css", package = "odsrmd"), to=dir_tmp)
 # browseURL(dir_tmp)
 path <- paste0(dir_tmp, "/example_rmd.Rmd")
 page_slug <- "testthat-odsrmd"
@@ -243,11 +269,12 @@ dir_tmp <- tempfile(pattern = "proj-")
 dir.create(dir_tmp)
 
 file.copy(from = system.file("examples/example_rmd.Rmd", package = "odsrmd"), to = dir_tmp)
+file.copy(from = system.file("examples/style.css", package = "odsrmd"), to=dir_tmp)
 # browseURL(dir_tmp)
 path <- paste0(dir_tmp, "/example_rmd.Rmd")
 page_slug <- "testthat-odsrmd"
 
-update_ods_page(path, page_slug, chosen_languages = "all", title = NULL,
+update_ods_page(path, page_slug, add_extra_css = "no", chosen_languages = "all", title = NULL,
   description = NULL, tags = NULL, restricted = NULL
 )
 ```

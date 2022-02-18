@@ -5,6 +5,7 @@
 #' Render Rmarkdown file as html file and extract the html nodes corresponding to body and style without the script nodes.    
 #' 
 #' @param path Path to the Rmd file. 
+#' @param add_extra_css Add css files listed in Rmarkdown yaml (output: html_document: css: ...). Default to "no" to not add extra css files. The option "append" adds the content of the css file(s) to the default Rmd style. The option "replace" replaces the default Rmd style by the content of the css file(s). 
 #'
 #' @return A named list with two elements : body and style. 
 #' @importFrom rmarkdown render
@@ -18,24 +19,39 @@
 #' dir_tmp <- tempfile(pattern = "proj-")
 #' dir.create(dir_tmp)
 #' 
-#' file.copy(from = system.file("examples/example_rmd.Rmd", package = "odsrmd"), to=dir_tmp)
+#' file.copy(from = system.file("examples/example_rmd.Rmd", package = "odsrmd"), to = dir_tmp)
+#' file.copy(from = system.file("examples/style.css", package = "odsrmd"), to = dir_tmp)
 #' # browseURL(dir_tmp)
 #' path <- paste0(dir_tmp, "/example_rmd.Rmd")
 #' 
-#' body_and_style <- get_body_and_style(path)
-get_body_and_style <- function(path) {
-  render(path, output_format = "html_document", output_options = "self-contained", 
-         envir = new.env(), quiet = TRUE)
+#' body_and_style <- get_body_and_style(path, add_extra_css = "no")
+get_body_and_style <- function(path, add_extra_css = "no") {
+  render(path, output_format = "html_document", envir = new.env(), quiet = TRUE)
 
   path_html <- gsub(pattern = ("[.]rmd|[.]Rmd"), replacement = ".html", x = path)
 
   html_content <- read_html(path_html)
-  style <- html_elements(html_content, "style") %>%
-    html_text() %>%
-    glue_collapse()
 
   body <- html_elements(html_content, "body>:not(script)") %>%
     glue_collapse()
+
+
+  if (add_extra_css == "no") {
+    style <- html_elements(html_content, "style") %>%
+      html_text() %>%
+      glue_collapse()
+  } else {
+    extra_css <- add_css(path)
+
+    if (add_extra_css == "append") {
+      style_orig <- html_elements(html_content, "style") %>%
+        html_text() %>%
+        glue_collapse()
+      style <- glue("{style_orig} {extra_css}", sep = "\n")
+    } else if (add_extra_css == "replace") {
+      style <- extra_css
+    }
+  }
 
   list(body = body, style = style)
 }

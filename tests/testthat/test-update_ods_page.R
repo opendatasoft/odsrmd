@@ -5,11 +5,12 @@ dir_tmp <- tempfile(pattern = "proj-")
 dir.create(dir_tmp)
 
 file.copy(from = system.file("examples/example_rmd.Rmd", package = "odsrmd"), to = dir_tmp)
+file.copy(from = system.file("examples/style.css", package = "odsrmd"), to=dir_tmp)
 # browseURL(dir_tmp)
 path <- paste0(dir_tmp, "/example_rmd.Rmd")
 page_slug <- "testthat-odsrmd"
 
-resp <- update_ods_page(path, page_slug, chosen_languages = "all", title = NULL,
+resp <- update_ods_page(path, page_slug, add_extra_css = "no", chosen_languages = "all", title = NULL,
   description = NULL, tags = NULL, restricted = NULL
 )
 

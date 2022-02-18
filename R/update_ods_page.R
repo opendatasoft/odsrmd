@@ -18,17 +18,18 @@
 #' dir.create(dir_tmp)
 #' 
 #' file.copy(from = system.file("examples/example_rmd.Rmd", package = "odsrmd"), to = dir_tmp)
+#' file.copy(from = system.file("examples/style.css", package = "odsrmd"), to=dir_tmp)
 #' # browseURL(dir_tmp)
 #' path <- paste0(dir_tmp, "/example_rmd.Rmd")
 #' page_slug <- "testthat-odsrmd"
 #' 
-#' update_ods_page(path, page_slug, chosen_languages = "all", title = NULL,
+#' update_ods_page(path, page_slug, add_extra_css = "no", chosen_languages = "all", title = NULL,
 #'   description = NULL, tags = NULL, restricted = NULL
 #' )
-update_ods_page <- function(path, page_slug, chosen_languages = "all", title = NULL,
+update_ods_page <- function(path, page_slug, add_extra_css = "no", chosen_languages = "all", title = NULL,
                             description = NULL, tags = NULL, restricted = NULL){
 
-body_and_style <- get_body_and_style(path)
+body_and_style <- get_body_and_style(path, add_extra_css = add_extra_css)
 
 page_elements <- get_ods_page(page_slug)
 

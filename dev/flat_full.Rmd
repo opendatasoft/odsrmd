@@ -114,7 +114,67 @@ test_that("api_error_body works", {
 ```
   
 
+<!-- add_css -->
+    
+```{r function-add_css}
+#' Identify extra css file(s) from Rmd files
+#' 
+#' Identify css files listed in Rmarkdown yaml (output: html_document: css: ...) and concatenate them in a single character string. 
+#' 
+#' @param path Path to the Rmd file. 
+#'
+#' @return A character string. 
+#' @importFrom rmarkdown yaml_front_matter
+#' 
+#' @noRd
+add_css <- function(path) {
+  yaml_tmp <- yaml_front_matter(path)
+  css_files <- yaml_tmp$output$html_document$css
 
+  css_content <- map_chr(css_files, function(x) {
+    file_tmp <- file.path(dirname(path), x)
+    readLines(con = file_tmp) %>%
+      glue_collapse(sep = "\n")
+  })
+
+  glue_collapse(css_content, sep = "\n")
+}
+```
+  
+```{r example-add_css}
+#' \dontrun{
+#' # Temporary directory for reproducible example
+#'
+#' dir_tmp <- tempfile(pattern = "proj-")
+#' dir.create(dir_tmp)
+#'
+#' file.copy(from = system.file("examples/example_rmd.Rmd", package = "odsrmd"), to=dir_tmp)
+#' file.copy(from = system.file("examples/style.css", package = "odsrmd"), to=dir_tmp)
+#' # browseURL(dir_tmp)
+#' path <- paste0(dir_tmp, "/example_rmd.Rmd")
+#'
+#' add_css(path)
+#' }
+```
+  
+```{r tests-add_css}
+# Temporary directory for reproducible example
+dir_tmp <- tempfile(pattern = "proj-")
+dir.create(dir_tmp)
+
+file.copy(from = system.file("examples/example_rmd.Rmd", package = "odsrmd"), to = dir_tmp)
+file.copy(from = system.file("examples/style.css", package = "odsrmd"), to = dir_tmp)
+# browseURL(dir_tmp)
+path <- paste0(dir_tmp, "/example_rmd.Rmd")
+
+css_output <- add_css(path)
+
+test_that("add_css works", {
+  expect_true(inherits(add_css, "function"))
+  expect_type(css_output, "character")
+})
+```
+  
 
 
 
@@ -130,6 +190,7 @@ Here we render the Rmarkdown file as an .html file and extract the html the html
 #' Render Rmarkdown file as html file and extract the html nodes corresponding to body and style without the script nodes.    
 #' 
 #' @param path Path to the Rmd file. 
+#' @param add_extra_css Add css files listed in Rmarkdown yaml (output: html_document: css: ...). Default to "no" to not add extra css files. The option "append" adds the content of the css file(s) to the default Rmd style. The option "replace" replaces the default Rmd style by the content of the css file(s). 
 #'
 #' @return A named list with two elements : body and style. 
 #' @importFrom rmarkdown render
@@ -138,19 +199,33 @@ Here we render the Rmarkdown file as an .html file and extract the html the html
 #' @importFrom magrittr %>%
 #' 
 #' @export 
-get_body_and_style <- function(path) {
-  render(path, output_format = "html_document", output_options = "self-contained", 
-         envir = new.env(), quiet = TRUE)
+get_body_and_style <- function(path, add_extra_css = "no") {
+  render(path, output_format = "html_document", envir = new.env(), quiet = TRUE)
 
   path_html <- gsub(pattern = ("[.]rmd|[.]Rmd"), replacement = ".html", x = path)
 
   html_content <- read_html(path_html)
-  style <- html_elements(html_content, "style") %>%
-    html_text() %>%
-    glue_collapse()
 
   body <- html_elements(html_content, "body>:not(script)") %>%
     glue_collapse()
+
+
+  if (add_extra_css == "no") {
+    style <- html_elements(html_content, "style") %>%
+      html_text() %>%
+      glue_collapse()
+  } else {
+    extra_css <- add_css(path)
+
+    if (add_extra_css == "append") {
+      style_orig <- html_elements(html_content, "style") %>%
+        html_text() %>%
+        glue_collapse()
+      style <- glue("{style_orig} {extra_css}", sep = "\n")
+    } else if (add_extra_css == "replace") {
+      style <- extra_css
+    }
+  }
 
   list(body = body, style = style)
 }
@@ -161,11 +236,12 @@ get_body_and_style <- function(path) {
 dir_tmp <- tempfile(pattern = "proj-")
 dir.create(dir_tmp)
 
-file.copy(from = system.file("examples/example_rmd.Rmd", package = "odsrmd"), to=dir_tmp)
+file.copy(from = system.file("examples/example_rmd.Rmd", package = "odsrmd"), to = dir_tmp)
+file.copy(from = system.file("examples/style.css", package = "odsrmd"), to = dir_tmp)
 # browseURL(dir_tmp)
 path <- paste0(dir_tmp, "/example_rmd.Rmd")
 
-body_and_style <- get_body_and_style(path)
+body_and_style <- get_body_and_style(path, add_extra_css = "no")
 ```
   
 ```{r tests-get_body_and_style}
@@ -173,7 +249,8 @@ body_and_style <- get_body_and_style(path)
 dir_tmp <- tempfile(pattern = "proj-")
 dir.create(dir_tmp)
 
-file.copy(from = system.file("examples/example_rmd.Rmd", package = "odsrmd"), to=dir_tmp)
+file.copy(from = system.file("examples/example_rmd.Rmd", package = "odsrmd"), to = dir_tmp)
+file.copy(from = system.file("examples/style.css", package = "odsrmd"), to = dir_tmp)
 # browseURL(dir_tmp)
 path <- paste0(dir_tmp, "/example_rmd.Rmd")
 
@@ -577,6 +654,7 @@ dir_tmp <- tempfile(pattern = "proj-")
 dir.create(dir_tmp)
 
 file.copy(from = system.file("examples/example_rmd.Rmd", package = "odsrmd"), to = dir_tmp)
+file.copy(from = system.file("examples/style.css", package = "odsrmd"), to=dir_tmp)
 # browseURL(dir_tmp)
 path <- paste0(dir_tmp, "/example_rmd.Rmd")
 page_slug <- "testthat-odsrmd"
@@ -599,6 +677,7 @@ dir_tmp <- tempfile(pattern = "proj-")
 dir.create(dir_tmp)
 
 file.copy(from = system.file("examples/example_rmd.Rmd", package = "odsrmd"), to = dir_tmp)
+file.copy(from = system.file("examples/style.css", package = "odsrmd"), to=dir_tmp)
 # browseURL(dir_tmp)
 path <- paste0(dir_tmp, "/example_rmd.Rmd")
 page_slug <- "testthat-odsrmd"
@@ -712,6 +791,7 @@ dir_tmp <- tempfile(pattern = "proj-")
 dir.create(dir_tmp)
 
 file.copy(from = system.file("examples/example_rmd.Rmd", package = "odsrmd"), to=dir_tmp)
+file.copy(from = system.file("examples/style.css", package = "odsrmd"), to=dir_tmp)
 # browseURL(dir_tmp)
 path <- paste0(dir_tmp, "/example_rmd.Rmd")
 page_slug <- "testthat-odsrmd"
@@ -737,6 +817,7 @@ dir_tmp <- tempfile(pattern = "proj-")
 dir.create(dir_tmp)
 
 file.copy(from = system.file("examples/example_rmd.Rmd", package = "odsrmd"), to=dir_tmp)
+file.copy(from = system.file("examples/style.css", package = "odsrmd"), to=dir_tmp)
 # browseURL(dir_tmp)
 path <- paste0(dir_tmp, "/example_rmd.Rmd")
 page_slug <- "testthat-odsrmd"
@@ -774,10 +855,10 @@ test_that("put_ods_page works", {
 #' @return If request is successful (i.e. the request was successfully performed and a response with HTTP status code <400 was received), an HTTP response; otherwise it throws an error. 
 #' 
 #' @export
-update_ods_page <- function(path, page_slug, chosen_languages = "all", title = NULL,
+update_ods_page <- function(path, page_slug, add_extra_css = "no", chosen_languages = "all", title = NULL,
                             description = NULL, tags = NULL, restricted = NULL){
 
-body_and_style <- get_body_and_style(path)
+body_and_style <- get_body_and_style(path, add_extra_css = add_extra_css)
 
 page_elements <- get_ods_page(page_slug)
 
@@ -794,11 +875,12 @@ dir_tmp <- tempfile(pattern = "proj-")
 dir.create(dir_tmp)
 
 file.copy(from = system.file("examples/example_rmd.Rmd", package = "odsrmd"), to = dir_tmp)
+file.copy(from = system.file("examples/style.css", package = "odsrmd"), to=dir_tmp)
 # browseURL(dir_tmp)
 path <- paste0(dir_tmp, "/example_rmd.Rmd")
 page_slug <- "testthat-odsrmd"
 
-update_ods_page(path, page_slug, chosen_languages = "all", title = NULL,
+update_ods_page(path, page_slug, add_extra_css = "no", chosen_languages = "all", title = NULL,
   description = NULL, tags = NULL, restricted = NULL
 )
 ```
@@ -809,11 +891,12 @@ dir_tmp <- tempfile(pattern = "proj-")
 dir.create(dir_tmp)
 
 file.copy(from = system.file("examples/example_rmd.Rmd", package = "odsrmd"), to = dir_tmp)
+file.copy(from = system.file("examples/style.css", package = "odsrmd"), to=dir_tmp)
 # browseURL(dir_tmp)
 path <- paste0(dir_tmp, "/example_rmd.Rmd")
 page_slug <- "testthat-odsrmd"
 
-resp <- update_ods_page(path, page_slug, chosen_languages = "all", title = NULL,
+resp <- update_ods_page(path, page_slug, add_extra_css = "no", chosen_languages = "all", title = NULL,
   description = NULL, tags = NULL, restricted = NULL
 )
 

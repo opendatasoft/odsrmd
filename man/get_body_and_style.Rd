@@ -4,10 +4,12 @@
 \alias{get_body_and_style}
 \title{Get body and style}
 \usage{
-get_body_and_style(path)
+get_body_and_style(path, add_extra_css = "no")
 }
 \arguments{
 \item{path}{Path to the Rmd file.}
+
+\item{add_extra_css}{Add css files listed in Rmarkdown yaml (output: html_document: css: ...). Default to "no" to not add extra css files. The option "append" adds the content of the css file(s) to the default Rmd style. The option "replace" replaces the default Rmd style by the content of the css file(s).}
 }
 \value{
 A named list with two elements : body and style.
@@ -20,9 +22,10 @@ Render Rmarkdown file as html file and extract the html nodes corresponding to b
 dir_tmp <- tempfile(pattern = "proj-")
 dir.create(dir_tmp)
 
-file.copy(from = system.file("examples/example_rmd.Rmd", package = "odsrmd"), to=dir_tmp)
+file.copy(from = system.file("examples/example_rmd.Rmd", package = "odsrmd"), to = dir_tmp)
+file.copy(from = system.file("examples/style.css", package = "odsrmd"), to = dir_tmp)
 # browseURL(dir_tmp)
 path <- paste0(dir_tmp, "/example_rmd.Rmd")
 
-body_and_style <- get_body_and_style(path)
+body_and_style <- get_body_and_style(path, add_extra_css = "no")
 }

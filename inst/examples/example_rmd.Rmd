@@ -1,6 +1,8 @@
 ---
 title: "Untitled"
-output: html_document
+output: 
+  html_document:
+    css: style.css
 ---
 
 ```{r options, include=FALSE}
