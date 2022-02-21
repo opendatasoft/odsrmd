@@ -31,6 +31,7 @@ knitr::opts_chunk$set(
 
 ```{r message = FALSE}
 library(dplyr)
+library(rmarkdown)
 ```
 
 This vignette guides you through the procedure to display the content of an Rmarkdown file on a classic page from the Opendatasoft platform. Here we will take a simple Rmarkdown file, stored as example in the package {odsrmd}. You can prepare you own Rmarkdown file. Note that you can query data from your own platform using the [API version 2](https://help.opendatasoft.com/apis/ods-explore-v2/). 
@@ -72,6 +73,30 @@ We also assume that you already created an empty classic page, for which the pag
   
 
   
+
+<!-- detect_unsupported_format -->
+    
+
+  
+
+```{r example-detect_unsupported_format}
+#' \dontrun{
+#' # Temporary directory for reproducible example
+#' dir_tmp <- tempfile(pattern = "proj-")
+#' dir.create(dir_tmp)
+#'
+#' file.copy(from = system.file("examples/example_flexdashboard.Rmd", package = "odsrmd"), to = dir_tmp)
+#' # browseURL(dir_tmp)
+#' path <- paste0(dir_tmp, "/example_flexdashboard.Rmd")
+#'
+#' detect_unsupported_format(path)
+#' }
+```
+
+  
+
+  
+
 
 <!-- add_css -->
     

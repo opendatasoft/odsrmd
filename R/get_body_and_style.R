@@ -26,15 +26,20 @@
 #' 
 #' body_and_style <- get_body_and_style(path, add_extra_css = "no")
 get_body_and_style <- function(path, add_extra_css = "no") {
+  detect_unsupported_format(path)
+
+  if (!is.character(add_extra_css) || (add_extra_css != "no" && add_extra_css != "replace" && add_extra_css != "append") ) {
+    stop("add_extra_css must be a character string equal to 'no', 'append' or 'replace'.")
+  }
+  
   render(path, output_format = "html_document", envir = new.env(), quiet = TRUE)
 
   path_html <- gsub(pattern = ("[.]rmd|[.]Rmd"), replacement = ".html", x = path)
-
   html_content <- read_html(path_html)
 
   body <- html_elements(html_content, "body>:not(script)") %>%
+    html_elements(":not(script)") %>%
     glue_collapse()
-
 
   if (add_extra_css == "no") {
     style <- html_elements(html_content, "style") %>%

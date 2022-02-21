@@ -25,16 +25,21 @@
 #' add_css(path)
 #' }
 add_css <- function(path) {
-  yaml_tmp <- yaml_front_matter(path)
-  css_files <- yaml_tmp$output$html_document$css
+  yaml_content <- yaml_front_matter(path)
 
-  css_content <- map_chr(css_files, function(x) {
-    file_tmp <- file.path(dirname(path), x)
-    readLines(con = file_tmp) %>%
-      glue_collapse(sep = "\n")
-  })
+  if ("output" %in% names(yaml_content) && "html_document" %in% names(yaml_content$output)) {
+    css_files <- yaml_content$output$html_document$css
 
-  glue_collapse(css_content, sep = "\n")
+    css_content <- map_chr(css_files, function(x) {
+      file_tmp <- file.path(dirname(path), x)
+      readLines(con = file_tmp) %>%
+        glue_collapse(sep = "\n")
+    })
+
+    glue_collapse(css_content, sep = "\n")
+  } else {
+    stop("No additionnal .css files found under 'output: html_document'.")
+  }
 }
 
 #' Extract error messages and warnings sent by the API
@@ -93,4 +98,36 @@ api_error_body <- function(resp) {
   }
   
   message(paste(error, message, detailed_errors, sep = "\n"))
+}
+
+#' Detects Rmarkdown derived formats unsupported by {odsrmd}
+#' 
+#' Detects Rmarkdown derived formats unsupported by {odsrmd}, such as {flexdashboard} and {pagedown}. 
+#' 
+#' @param path Path to the Rmd file. 
+#'
+#' @return
+#' @importFrom rmarkdown yaml_front_matter
+#' 
+#' @noRd
+#' @examples
+#' \dontrun{
+#' # Temporary directory for reproducible example
+#' dir_tmp <- tempfile(pattern = "proj-")
+#' dir.create(dir_tmp)
+#' #'
+#' file.copy(from = system.file("examples/example_flexdashboard.Rmd", package = "odsrmd"), to = dir_tmp)
+#' # browseURL(dir_tmp)
+#' path <- paste0(dir_tmp, "/example_flexdashboard.Rmd")
+#' #'
+#' detect_unsupported_format(path)
+#' }
+detect_unsupported_format <- function(path) {
+  yaml_content <- yaml_front_matter(path)
+
+  if ("output" %in% names(yaml_content) && (!is.null(names(yaml_content$output)) && grepl(pattern = "flexdashboard", x = names(yaml_content$output)))) {
+    stop("The flexdashboard format is not supported by {odsrmd}.")
+  } else if ("output" %in% names(yaml_content) && (!is.null(names(yaml_content$output)) && grepl(pattern = "pagedown", x = names(yaml_content$output)))) {
+    stop("The pagedown format is not supported by {odsrmd}.")
+  }
 }

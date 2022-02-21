@@ -31,6 +31,7 @@ pkgload::load_all(path = here::here(), export_all = FALSE)
 
 ```{r, message=FALSE}
 library(dplyr)
+library(rmarkdown)
 ```
 
 This vignette guides you through the procedure to display the content of an Rmarkdown file on a classic page from the Opendatasoft platform. Here we will take a simple Rmarkdown file, stored as example in the package {odsrmd}. You can prepare you own Rmarkdown file. Note that you can query data from your own platform using the [API version 2](https://help.opendatasoft.com/apis/ods-explore-v2/). 
@@ -114,6 +115,68 @@ test_that("api_error_body works", {
 ```
   
 
+<!-- detect_unsupported_format -->
+    
+```{r function-detect_unsupported_format}
+#' Detects Rmarkdown derived formats unsupported by {odsrmd}
+#' 
+#' Detects Rmarkdown derived formats unsupported by {odsrmd}, such as {flexdashboard} and {pagedown}. 
+#' 
+#' @param path Path to the Rmd file. 
+#'
+#' @return
+#' @importFrom rmarkdown yaml_front_matter
+#' 
+#' @noRd
+detect_unsupported_format <- function(path) {
+  yaml_content <- yaml_front_matter(path)
+
+  if ("output" %in% names(yaml_content) && (!is.null(names(yaml_content$output)) && grepl(pattern = "flexdashboard", x = names(yaml_content$output)))) {
+    stop("The flexdashboard format is not supported by {odsrmd}.")
+  } else if ("output" %in% names(yaml_content) && (!is.null(names(yaml_content$output)) && grepl(pattern = "pagedown", x = names(yaml_content$output)))) {
+    stop("The pagedown format is not supported by {odsrmd}.")
+  }
+}
+```
+  
+```{r example-detect_unsupported_format}
+#' \dontrun{
+#' # Temporary directory for reproducible example
+#' dir_tmp <- tempfile(pattern = "proj-")
+#' dir.create(dir_tmp)
+#'
+#' file.copy(from = system.file("examples/example_flexdashboard.Rmd", package = "odsrmd"), to = dir_tmp)
+#' # browseURL(dir_tmp)
+#' path <- paste0(dir_tmp, "/example_flexdashboard.Rmd")
+#'
+#' detect_unsupported_format(path)
+#' }
+```
+  
+```{r tests-detect_unsupported_format}
+# Temporary directory for reproducible example
+dir_tmp <- tempfile(pattern = "proj-")
+dir.create(dir_tmp)
+
+file.copy(from = system.file("examples/example_rmd.Rmd", package = "odsrmd"), to = dir_tmp)
+file.copy(from = system.file("examples/style.css", package = "odsrmd"), to = dir_tmp)
+file.copy(from = system.file("examples/example_flexdashboard.Rmd", package = "odsrmd"), to = dir_tmp)
+file.copy(from = system.file("examples/example_pagedown.Rmd", package = "odsrmd"), to = dir_tmp)
+# browseURL(dir_tmp)
+path1 <- paste0(dir_tmp, "/example_rmd.Rmd")
+path2 <- paste0(dir_tmp, "/example_flexdashboard.Rmd")
+path3 <- paste0(dir_tmp, "/example_pagedown.Rmd")
+
+test_that("detect_unsupported_format works", {
+  expect_true(inherits(detect_unsupported_format, "function"))
+  expect_silent(detect_unsupported_format(path1))
+  expect_error(detect_unsupported_format(path2))
+  expect_error(detect_unsupported_format(path3))
+})
+```
+  
+
+
 <!-- add_css -->
     
 ```{r function-add_css}
@@ -128,16 +191,21 @@ test_that("api_error_body works", {
 #' 
 #' @noRd
 add_css <- function(path) {
-  yaml_tmp <- yaml_front_matter(path)
-  css_files <- yaml_tmp$output$html_document$css
+  yaml_content <- yaml_front_matter(path)
 
-  css_content <- map_chr(css_files, function(x) {
-    file_tmp <- file.path(dirname(path), x)
-    readLines(con = file_tmp) %>%
-      glue_collapse(sep = "\n")
-  })
+  if ("output" %in% names(yaml_content) && "html_document" %in% names(yaml_content$output)) {
+    css_files <- yaml_content$output$html_document$css
 
-  glue_collapse(css_content, sep = "\n")
+    css_content <- map_chr(css_files, function(x) {
+      file_tmp <- file.path(dirname(path), x)
+      readLines(con = file_tmp) %>%
+        glue_collapse(sep = "\n")
+    })
+
+    glue_collapse(css_content, sep = "\n")
+  } else {
+    stop("No additionnal .css files found under 'output: html_document'.")
+  }
 }
 ```
   
@@ -164,14 +232,15 @@ dir.create(dir_tmp)
 
 file.copy(from = system.file("examples/example_rmd.Rmd", package = "odsrmd"), to = dir_tmp)
 file.copy(from = system.file("examples/style.css", package = "odsrmd"), to = dir_tmp)
+file.copy(from = system.file("examples/example_rmd_wo_css.Rmd", package = "odsrmd"), to = dir_tmp)
 # browseURL(dir_tmp)
-path <- paste0(dir_tmp, "/example_rmd.Rmd")
-
-css_output <- add_css(path)
+path1 <- paste0(dir_tmp, "/example_rmd.Rmd")
+path2 <- paste0(dir_tmp, "/example_rmd_wo_css.Rmd")
 
 test_that("add_css works", {
   expect_true(inherits(add_css, "function"))
-  expect_type(css_output, "character")
+  expect_type(add_css(path1), "character")
+  expect_error(add_css(path2))
 })
 ```
   
@@ -200,15 +269,20 @@ Here we render the Rmarkdown file as an .html file and extract the html the html
 #' 
 #' @export 
 get_body_and_style <- function(path, add_extra_css = "no") {
+  detect_unsupported_format(path)
+
+  if (!is.character(add_extra_css) || (add_extra_css != "no" && add_extra_css != "replace" && add_extra_css != "append") ) {
+    stop("add_extra_css must be a character string equal to 'no', 'append' or 'replace'.")
+  }
+  
   render(path, output_format = "html_document", envir = new.env(), quiet = TRUE)
 
   path_html <- gsub(pattern = ("[.]rmd|[.]Rmd"), replacement = ".html", x = path)
-
   html_content <- read_html(path_html)
 
   body <- html_elements(html_content, "body>:not(script)") %>%
+    html_elements(":not(script)") %>%
     glue_collapse()
-
 
   if (add_extra_css == "no") {
     style <- html_elements(html_content, "style") %>%
@@ -251,16 +325,26 @@ dir.create(dir_tmp)
 
 file.copy(from = system.file("examples/example_rmd.Rmd", package = "odsrmd"), to = dir_tmp)
 file.copy(from = system.file("examples/style.css", package = "odsrmd"), to = dir_tmp)
+file.copy(from = system.file("examples/example_rmd_wo_css.Rmd", package = "odsrmd"), to = dir_tmp)
+file.copy(from = system.file("examples/example_flexdashboard.Rmd", package = "odsrmd"), to = dir_tmp)
+file.copy(from = system.file("examples/example_pagedown.Rmd", package = "odsrmd"), to = dir_tmp)
 # browseURL(dir_tmp)
-path <- paste0(dir_tmp, "/example_rmd.Rmd")
+path1 <- paste0(dir_tmp, "/example_rmd.Rmd")
+path2 <- paste0(dir_tmp, "/example_rmd_wo_css.Rmd")
+path3 <- paste0(dir_tmp, "/example_flexdashboard.Rmd")
+path4 <- paste0(dir_tmp, "/example_pagedown.Rmd")
 
-output <- get_body_and_style(path)
+output <- get_body_and_style(path1)
 
 test_that("get_body_and_style works", {
   expect_true(inherits(get_body_and_style, "function"))
   expect_type(output, "list")
   expect_length(output, 2)
   expect_identical(names(output), c("body", "style"))
+  expect_error(get_body_and_style(path1, add_extra_css = ""))
+  expect_error(get_body_and_style(path2, add_extra_css = "append"))
+  expect_error(get_body_and_style(path3))
+  expect_error(get_body_and_style(path4))
 })
 ```
 
