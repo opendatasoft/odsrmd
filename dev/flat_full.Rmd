@@ -139,7 +139,7 @@ detect_unsupported_format <- function(path) {
 }
 ```
   
-```{r example-detect_unsupported_format}
+```{r example-detect_unsupported_format, eval=FALSE, echo=FALSE}
 #' \dontrun{
 #' # Temporary directory for reproducible example
 #' dir_tmp <- tempfile(pattern = "proj-")
@@ -209,7 +209,7 @@ add_css <- function(path) {
 }
 ```
   
-```{r example-add_css}
+```{r example-add_css, eval=FALSE, echo=FALSE}
 #' \dontrun{
 #' # Temporary directory for reproducible example
 #'

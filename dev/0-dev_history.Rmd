@@ -19,12 +19,14 @@ fusen::fill_description(
     Title = "Prepare and send Rmd file on an ODS platform",
     Description = "Knit Rmarkdown and send html output on an OpenDataSoft platform. Request credentials to access the platform.",
     `Authors@R` = c(
-      person("Marion", "Louveaux", email = "marion.louveaux@opendatasoft.com", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-1794-3748"))
+      person("Marion", "Louveaux", email = "marion.louveaux@opendatasoft.com", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-1794-3748")),
+    person("Opendatasoft", role = "cph")
     )
-  )
+  ),
+  overwrite = FALSE
 )
 # Define License with use_*_license()
-usethis::use_mit_license(copyright_holder = "Marion Louveaux")
+usethis::use_mit_license(copyright_holder = "Opendatasoft")
 ```
 
 # Start using git

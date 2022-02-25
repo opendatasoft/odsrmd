@@ -58,7 +58,7 @@ usethis::use_git_ignore(ignores = ".Renviron")
 
 Here is a minimal example on how to use the {odsrmd} package.
 
-First, login on your Opendatasoft platform, go to the backoffice and create a classic page and write "test" as the page URL. Then, add your credentials and domain ID to the .Renviron file. 
+First, login on your Opendatasoft platform, go to the backoffice, create a classic page and write "test" as the page URL. Then, add your credentials and domain ID to the .Renviron file. 
 Now run the example below. 
 
 ```{r example, eval=FALSE}
@@ -69,31 +69,34 @@ dir_tmp <- tempfile(pattern = "proj-")
 dir.create(dir_tmp)
 
 # Use example Rmd from the {odsrmd} library
-file.copy(from = system.file("data/example_rmd.Rmd", package = "odsrmd"), to=dir_tmp)
+file.copy(from = system.file("examples/example_rmd.Rmd", package = "odsrmd"), to=dir_tmp)
+file.copy(from = system.file("examples/style.css", package = "odsrmd"), to=dir_tmp)
 path <- paste0(dir_tmp, "/example_rmd.Rmd")
 
 # Here the page to modify on the Opendatasoft platform is named "test"   
 page_slug <- "test"
 
-# Knit the Rmarkdown file
-body_and_style <- get_body_and_style(path)
-
-# Get elements from the page on the Opendatasoft platform
-page_elements <- get_ods_page(page_slug)
-
-# Prepare elements to send on the page on the Opendatasoft platform
-json_to_send <- create_json(page_elements, body_and_style, language = NULL, 
-                        title = NULL, description = NULL, template = NULL, 
-                        tags = NULL, restricted = NULL)
-
 # Send elements to the page on the Opendatasoft platform
-put_ods_page(page_slug, json_to_send)
+update_ods_page(path, page_slug, add_extra_css = "no", chosen_languages = "all", title = NULL,
+  description = NULL, tags = NULL, restricted = NULL
+)
 
 ```
 
+## Getting help 
+
+First, we suggest to try some general troubleshooting strategies:      
+- Check that you added your credentials to the .Renviron file. Check that you use a plain Rmarkdown file (no {flexdashboard}, no {pagedown}).        
+- Try to find out what the specific problem is, notably by identifying what is *not* causing the problem.          
+- “Unplug and plug it back in”: restart R, close and reopen R.              
+
+You can also submit an issue on Github if your question is directly related to the package {odsrmd}. Please indicate your version of R and of {odsrmd}, and provide a minimal version of the Rmarkdown document you would like to publish as a page on your platform.       
+
+Your question concerns your platform, your credentials etc? Please contact the Opendatasoft support or get in touch with your Customer Success Manager.            
+
 ## Code of Conduct
 
-Please note that the odsrmd project is released with a [Contributor Code of Conduct](https://contributor-covenant.org/version/2/0/CODE_OF_CONDUCT.html). By contributing to this project, you agree to abide by its terms.
+Please note that the {odsrmd} project is released with a [Contributor Code of Conduct](https://contributor-covenant.org/version/2/0/CODE_OF_CONDUCT.html). By contributing to this project, you agree to abide by its terms.
 
 
 

@@ -79,7 +79,7 @@ We also assume that you already created an empty classic page, for which the pag
 
   
 
-```{r example-detect_unsupported_format}
+```{r example-detect_unsupported_format, eval = FALSE, echo = FALSE}
 #' \dontrun{
 #' # Temporary directory for reproducible example
 #' dir_tmp <- tempfile(pattern = "proj-")
@@ -103,7 +103,7 @@ We also assume that you already created an empty classic page, for which the pag
 
   
 
-```{r example-add_css}
+```{r example-add_css, eval = FALSE, echo = FALSE}
 #' \dontrun{
 #' # Temporary directory for reproducible example
 #'

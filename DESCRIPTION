@@ -1,9 +1,11 @@
 Package: odsrmd
 Title: Prepare And Send Rmd File On An ODS Platform
 Version: 0.0.0.9000
-Authors@R: 
+Authors@R: c(
     person("Marion", "Louveaux", , "marion.louveaux@opendatasoft.com", role = c("aut", "cre"),
-           comment = c(ORCID = "0000-0002-1794-3748"))
+           comment = c(ORCID = "0000-0002-1794-3748")),
+    person("Opendatasoft", role = "cph")
+  )
 Description: Knit Rmarkdown and send html output on an OpenDataSoft
     platform. Request credentials to access the platform.
 License: MIT + file LICENSE
@@ -20,7 +22,7 @@ Suggests:
     dplyr,
     knitr,
     testthat,
-    vcr (>= 0.6.0)
+    vcr
 VignetteBuilder: 
     knitr
 Encoding: UTF-8
