@@ -4,7 +4,7 @@ Version: 0.1.0
 Authors@R: c(
     person("Marion", "Louveaux", , "marion.louveaux@opendatasoft.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-1794-3748")),
-    person("Opendatasoft", role = "cph")
+    person("Opendatasoft", role = c("fnd", "cph"))
   )
 Description: Knit Rmarkdown and send html output on an OpenDataSoft
     platform. Request credentials to access the platform.
@@ -28,3 +28,4 @@ VignetteBuilder:
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2
+URL: https://opendatasoft.github.io/odsrmd/

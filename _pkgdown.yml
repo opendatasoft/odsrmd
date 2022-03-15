@@ -1,4 +1,13 @@
-url: ~
+url: https://opendatasoft.github.io/odsrmd/
 template:
   bootstrap: 5
+  bootswatch: simplex
+  bslib:
+    primary: "#142E7B"
+authors:
+  Opendatasoft:
+    href: "https://www.opendatasoft.com/"
+    html: "<img src='https://www.opendatasoft.com/wp-content/uploads/2021/10/logo-mobile.svg' height=24>"
+
+  Marion Louveaux:
 

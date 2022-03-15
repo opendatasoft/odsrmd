@@ -7,6 +7,9 @@
 
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+![GitHub](https://img.shields.io/github/license/opendatasoft/odsrmd?style=plastic)
+![GitHub R package
+version](https://img.shields.io/github/r-package/v/opendatasoft/odsrmd?style=plastic)
 <!-- badges: end -->
 
 The goal of {odsrmd} is to give the possibility to R users to add
