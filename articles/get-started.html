@@ -78,16 +78,17 @@
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/rstudio/rmarkdown" class="external-link">rmarkdown</a></span><span class="op">)</span></code></pre></div>
-<p>This vignette guides you through the procedure to display the content of an Rmarkdown file on a classic page from the Opendatasoft platform. Here we will take a simple Rmarkdown file, stored as example in the package {odsrmd}. You can prepare you own Rmarkdown file. Note that you can query data from your own platform using the <a href="https://help.opendatasoft.com/apis/ods-explore-v2/" class="external-link">API version 2</a>.</p>
-<p>We assume that you have access to an Opendatasoft platform and have the rights to create and edit a page on the platform. As described in the README, you need to add the following environment variables to your Renviron file: <code>ODS_DOMAIN_ID</code>, <code>ODS_USERNAME</code> and <code>ODS_PASSWORD</code>. The <code>ODS_DOMAIN_ID</code> variable corresponds to the domain ID of your Opendatasoft domain. <code>ODS_USERNAME</code> and <code>ODS_PASSWORD</code> correspond respectively to your username and password to access the platform.<br>
-We also assume that you already created an empty classic page, for which the page URL (or page slug) is “test”.</p>
+<p>This vignette guides you through the procedure to <strong>display the content of an Rmarkdown file on a classic page from the Opendatasoft platform</strong>. You can either go step by step with separated functions, or, if you prefer a single command line version, directly use <code><a href="../reference/update_ods_page.html">update_ods_page()</a></code>.</p>
+<p>In both cases, we assume that <strong>you have access to an Opendatasoft platform</strong> and <strong>you have the rights to create and edit a page on the platform</strong>. As described in the README, you need to add the following environment variables to your Renviron file: <code>ODS_DOMAIN_ID</code>, <code>ODS_USERNAME</code> and <code>ODS_PASSWORD</code>. The <code>ODS_DOMAIN_ID</code> variable corresponds to the domain ID of your Opendatasoft domain. <code>ODS_USERNAME</code> and <code>ODS_PASSWORD</code> correspond respectively to your username and password to access the platform.<br>
+We also assume that you already created an empty classic page, for which the page URL (or page slug) is “odsrmd-example”.</p>
+<p>For this vignette, we will take a simple Rmarkdown file, stored as example in the package {odsrmd}. You can prepare your own Rmarkdown file. Note that you can query data from your own Opendatasoft platform using the <a href="https://help.opendatasoft.com/apis/ods-explore-v2/" class="external-link">ODS Explore API version 2</a>. We also provide an example of output from <code><a href="../reference/get_ods_page.html">get_ods_page()</a></code> to test {odsrmd} without credentials.</p>
 <!-- ## api_error_body -->
 <!-- detect_unsupported_format -->
 <!-- add_css -->
 <div class="section level2">
 <h2 id="get_body_and_style">get_body_and_style<a class="anchor" aria-label="anchor" href="#get_body_and_style"></a>
 </h2>
-<p>Here we render the Rmarkdown file as an .html file and extract the html the html nodes corresponding to body and style of the page. You cannot include scripts on a classic page from the Opendatasoft platform. Scripts nodes are removed from the html document and interactive libraries such as {plotly} or {highcharter} cannot be used here in the Rmarkdown document.</p>
+<p><code><a href="../reference/get_body_and_style.html">get_body_and_style()</a></code> renders the Rmarkdown file as an .html file and extracts the html nodes corresponding to the body and the style of the page. Note that <strong>you cannot include scripts on a classic page from the Opendatasoft platform</strong>. Hence, scripts nodes are removed from the html document by <code><a href="../reference/get_body_and_style.html">get_body_and_style()</a></code> and interactive libraries such as {plotly} or {highcharter} don’t work here.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Temporary directory for reproducible example</span>
 <span class="va">dir_tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span>pattern <span class="op">=</span> <span class="st">"proj-"</span><span class="op">)</span>
@@ -103,16 +104,15 @@ We also assume that you already created an empty classic page, for which the pag
 <div class="section level2">
 <h2 id="get_ods_page">get_ods_page<a class="anchor" aria-label="anchor" href="#get_ods_page"></a>
 </h2>
-<p>Here we assume that you have access to an Opendatasoft platform and have the rights to create and edit a page on the platform. We also assume that you added the <code>ODS_DOMAIN_ID</code>, <code>ODS_USERNAME</code> and <code>ODS_PASSWORD</code>environment variables to your Renviron file.<br>
-And we also assume that you already created an empty classic page on the platform, for which the page URL (or page slug) is “test”.</p>
-<p>The get_ods_page() function gets all pre-existing information of the page, such as its title, description, tags and current content. If no other information is provided, these elements will be re-used in create_json() to create the JSON object that will be sent back on the Opendatasoft platform using the put_ods_page() function.</p>
+<p><code><a href="../reference/get_ods_page.html">get_ods_page()</a></code> gets all pre-existing information of the page, such as its title, description, tags and current content. If no other information is provided to <code><a href="../reference/create_json.html">create_json()</a></code>, elements collected by <code><a href="../reference/get_ods_page.html">get_ods_page()</a></code> will be re-used by<code><a href="../reference/create_json.html">create_json()</a></code> to create the JSON object that will be sent back on the Opendatasoft platform using the <code><a href="../reference/put_ods_page.html">put_ods_page()</a></code> function.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">page_slug</span> <span class="op">&lt;-</span> <span class="st">"testthat-odsrmd"</span> 
+<code class="sourceCode R"><span class="va">page_slug</span> <span class="op">&lt;-</span> <span class="st">"odsrmd-example"</span> 
 <span class="va">page_elements</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_ods_page.html">get_ods_page</a></span><span class="op">(</span><span class="va">page_slug</span><span class="op">)</span> </code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="get_languages">get_languages<a class="anchor" aria-label="anchor" href="#get_languages"></a>
 </h2>
+<p><code><a href="../reference/get_languages.html">get_languages()</a></code> retrieves all languages available on an Opendatasoft platform, from the information contained in <code>page_elements</code>, the output from <code><a href="../reference/get_ods_page.html">get_ods_page()</a></code>. You can use it apart to check languages available on your Opendatasoft platform. Otherwise, it is used inside <code><a href="../reference/is_available.html">is_available()</a></code>. Here, we provide an example of <code>page_elements</code> to illustrate the action of <code><a href="../reference/get_languages.html">get_languages()</a></code>.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Temporary directory for reproducible example</span>
 <span class="va">dir_tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span>pattern <span class="op">=</span> <span class="st">"proj-"</span><span class="op">)</span>
@@ -127,6 +127,7 @@ And we also assume that you already created an empty classic page on the platfor
 <div class="section level2">
 <h2 id="is_available">is_available<a class="anchor" aria-label="anchor" href="#is_available"></a>
 </h2>
+<p><code><a href="../reference/is_available.html">is_available()</a></code> checks if a given language is available on the ODS platform from the list of languages contained in <code>page_elements</code>, the output from <code><a href="../reference/get_ods_page.html">get_ods_page()</a></code>. You can use it apart to check if a given language is available on your Opendatasoft platform. Otherwise, it is used inside <code><a href="../reference/create_json.html">create_json()</a></code>. Here, we provide an example of <code>page_elements</code> to illustrate the action of <code><a href="../reference/is_available.html">is_available()</a></code>.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Temporary directory for reproducible example</span>
 <span class="va">dir_tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span>pattern <span class="op">=</span> <span class="st">"proj-"</span><span class="op">)</span>
@@ -140,7 +141,7 @@ And we also assume that you already created an empty classic page on the platfor
 <div class="section level2">
 <h2 id="create_json">create_json<a class="anchor" aria-label="anchor" href="#create_json"></a>
 </h2>
-<p>Now we combine information coming from the Opendatasoft page (with get_ods_page()) and the Rmarkdown document (with get_body_and_style()) into a JSON object ready to be sent back to the Opendatasoft platform.</p>
+<p><code><a href="../reference/create_json.html">create_json()</a></code> combines information coming from the Opendatasoft page (with <code><a href="../reference/get_ods_page.html">get_ods_page()</a></code>) and the Rmarkdown document (with <code><a href="../reference/get_body_and_style.html">get_body_and_style()</a></code>) into a JSON object ready to be sent back to the Opendatasoft platform. With the <code>chosen_language</code> parameter, you can decide to update all or only some language versions of the page. Here, we provide an example of output from <code><a href="../reference/get_ods_page.html">get_ods_page()</a></code>, called <code>page_elements</code>, to illustrate the action of <code><a href="../reference/create_json.html">create_json()</a></code>.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Temporary directory for reproducible example</span>
 <span class="va">dir_tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span>pattern <span class="op">=</span> <span class="st">"proj-"</span><span class="op">)</span>
@@ -166,7 +167,7 @@ And we also assume that you already created an empty classic page on the platfor
 <div class="section level2">
 <h2 id="put_ods_page">put_ods_page<a class="anchor" aria-label="anchor" href="#put_ods_page"></a>
 </h2>
-<p>put_ods_page() updates the content of the page on the Opendatasoft platform with a JSON object. It sends back an HTTP response if the request is successful, otherwise it throws an error.</p>
+<p><code><a href="../reference/put_ods_page.html">put_ods_page()</a></code> updates the content of the page on the Opendatasoft platform with a JSON object coming from <code><a href="../reference/create_json.html">create_json()</a></code>. It sends back an HTTP response if the request is successful, otherwise it throws an error.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Temporary directory for reproducible example</span>
 <span class="va">dir_tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span>pattern <span class="op">=</span> <span class="st">"proj-"</span><span class="op">)</span>
@@ -176,11 +177,9 @@ And we also assume that you already created an empty classic page on the platfor
 <span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.copy</a></span><span class="op">(</span>from <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"examples/style.css"</span>, package <span class="op">=</span> <span class="st">"odsrmd"</span><span class="op">)</span>, to<span class="op">=</span><span class="va">dir_tmp</span><span class="op">)</span>
 <span class="co"># browseURL(dir_tmp)</span>
 <span class="va">path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">dir_tmp</span>, <span class="st">"/example_rmd.Rmd"</span><span class="op">)</span>
-<span class="va">page_slug</span> <span class="op">&lt;-</span> <span class="st">"testthat-odsrmd"</span>
-
+<span class="va">page_slug</span> <span class="op">&lt;-</span> <span class="st">"odsrmd-example"</span>
 
 <span class="va">body_and_style</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_body_and_style.html">get_body_and_style</a></span><span class="op">(</span><span class="va">path</span><span class="op">)</span>
-
 
 <span class="va">page_elements</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_ods_page.html">get_ods_page</a></span><span class="op">(</span><span class="va">page_slug</span><span class="op">)</span>
 
@@ -193,6 +192,7 @@ And we also assume that you already created an empty classic page on the platfor
 <div class="section level2">
 <h2 id="update_ods_page">update_ods_page<a class="anchor" aria-label="anchor" href="#update_ods_page"></a>
 </h2>
+<p><code><a href="../reference/update_ods_page.html">update_ods_page()</a></code> is an all-in-one function to fill in and update an ODS page with the content of an Rmarkdown file. It combines <code><a href="../reference/get_body_and_style.html">get_body_and_style()</a></code>, <code><a href="../reference/get_ods_page.html">get_ods_page()</a></code>, <code><a href="../reference/create_json.html">create_json()</a></code> and <code><a href="../reference/put_ods_page.html">put_ods_page()</a></code> in a single command line.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Temporary directory for reproducible example</span>
 <span class="va">dir_tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span>pattern <span class="op">=</span> <span class="st">"proj-"</span><span class="op">)</span>
@@ -202,7 +202,7 @@ And we also assume that you already created an empty classic page on the platfor
 <span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.copy</a></span><span class="op">(</span>from <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"examples/style.css"</span>, package <span class="op">=</span> <span class="st">"odsrmd"</span><span class="op">)</span>, to<span class="op">=</span><span class="va">dir_tmp</span><span class="op">)</span>
 <span class="co"># browseURL(dir_tmp)</span>
 <span class="va">path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">dir_tmp</span>, <span class="st">"/example_rmd.Rmd"</span><span class="op">)</span>
-<span class="va">page_slug</span> <span class="op">&lt;-</span> <span class="st">"testthat-odsrmd"</span>
+<span class="va">page_slug</span> <span class="op">&lt;-</span> <span class="st">"odsrmd-example"</span>
 
 <span class="fu"><a href="../reference/update_ods_page.html">update_ods_page</a></span><span class="op">(</span><span class="va">path</span>, <span class="va">page_slug</span>, add_extra_css <span class="op">=</span> <span class="st">"no"</span>, chosen_languages <span class="op">=</span> <span class="st">"all"</span>, title <span class="op">=</span> <span class="cn">NULL</span>,
   description <span class="op">=</span> <span class="cn">NULL</span>, tags <span class="op">=</span> <span class="cn">NULL</span>, restricted <span class="op">=</span> <span class="cn">NULL</span>

@@ -78,11 +78,9 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-in"><span class="co"># browseURL(dir_tmp)</span></span>
 <span class="r-in"><span class="va">path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">dir_tmp</span>, <span class="st">"/example_rmd.Rmd"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">page_slug</span> <span class="op">&lt;-</span> <span class="st">"testthat-odsrmd"</span></span>
-<span class="r-in"></span>
+<span class="r-in"><span class="va">page_slug</span> <span class="op">&lt;-</span> <span class="st">"odsrmd-example"</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="va">body_and_style</span> <span class="op">&lt;-</span> <span class="fu"><a href="get_body_and_style.html">get_body_and_style</a></span><span class="op">(</span><span class="va">path</span><span class="op">)</span></span>
-<span class="r-in"></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="va">page_elements</span> <span class="op">&lt;-</span> <span class="fu"><a href="get_ods_page.html">get_ods_page</a></span><span class="op">(</span><span class="va">page_slug</span><span class="op">)</span></span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in get_ods_page(page_slug):</span> The domain identifier of the Opendatasoft platform is missing.</span>
@@ -96,8 +94,6 @@
 <span class="r-in"></span>
 <span class="r-in"><span class="fu">put_ods_page</span><span class="op">(</span><span class="va">page_slug</span>, <span class="va">json_to_send</span><span class="op">)</span></span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in put_ods_page(page_slug, json_to_send):</span> object 'json_to_send' not found</span>
-<span class="r-in"></span>
-<span class="r-in"></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

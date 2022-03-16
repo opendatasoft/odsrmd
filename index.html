@@ -66,12 +66,12 @@
 </h1></div>
 <!-- badges: start -->
 
-<p>The goal of {odsrmd} is to give the possibility to R users to add Rmarkdown files as pages on an Opendatasoft platform. It knits an Rmarkdown file to html, format it to JSON and send it via the management API on an Opendatasoft platform.<br>
+<p>The goal of {odsrmd} is to give the possibility to R users to add Rmarkdown files as pages on an Opendatasoft platform. It knits an Rmarkdown file to html, format it to JSON and send it via the <a href="https://help.opendatasoft.com/management-api/#introduction" class="external-link">management API</a> on an Opendatasoft platform.<br>
 Note that you cannot include scripts on a classic page from the Opendatasoft platform. Interactive libraries such as {plotly} or {highcharter} produce script nodes when the document is knitted to html. Hence they cannot be used in Rmarkdown documents that you intend to display as a page on an Opendatasoft platform. For the same reasons, {bookdown} and {flexdashboard} are not compatible with {odsrmd}.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>You can install the development version of odsrmd like so:</p>
+<p>You can install the development version of {odsrmd} like so:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># remotes::install_github("odsrmd")</span></code></pre></div>
 </div>
@@ -91,7 +91,7 @@ Be very careful to not display such information in a script and add the .Renviro
 <h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
 </h2>
 <p>Here is a minimal example on how to use the {odsrmd} package.</p>
-<p>First, login on your Opendatasoft platform, go to the backoffice, create a classic page and write “test” as the page URL. Then, add your credentials and domain ID to the .Renviron file. Now run the example below.</p>
+<p>First, login on your Opendatasoft platform, go to the backoffice, <a href="https://help.opendatasoft.com/platform/en/creating_content/01_creating_content_page/creating_page.html" class="external-link">create a classic page</a> and write “odsrmd-example” as the page URL. Then, add your credentials and domain ID to the .Renviron file. Now run the example below.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://opendatasoft.github.io/odsrmd/">odsrmd</a></span><span class="op">)</span>
 
@@ -104,8 +104,8 @@ Be very careful to not display such information in a script and add the .Renviro
 <span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.copy</a></span><span class="op">(</span>from <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"examples/style.css"</span>, package <span class="op">=</span> <span class="st">"odsrmd"</span><span class="op">)</span>, to<span class="op">=</span><span class="va">dir_tmp</span><span class="op">)</span>
 <span class="va">path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">dir_tmp</span>, <span class="st">"/example_rmd.Rmd"</span><span class="op">)</span>
 
-<span class="co"># Here the page to modify on the Opendatasoft platform is named "test"   </span>
-<span class="va">page_slug</span> <span class="op">&lt;-</span> <span class="st">"test"</span>
+<span class="co"># Here the page to modify on the Opendatasoft platform is named "odsrmd-example"   </span>
+<span class="va">page_slug</span> <span class="op">&lt;-</span> <span class="st">"odsrmd-example"</span>
 
 <span class="co"># Send elements to the page on the Opendatasoft platform</span>
 <span class="fu"><a href="reference/update_ods_page.html">update_ods_page</a></span><span class="op">(</span><span class="va">path</span>, <span class="va">page_slug</span>, add_extra_css <span class="op">=</span> <span class="st">"no"</span>, chosen_languages <span class="op">=</span> <span class="st">"all"</span>, title <span class="op">=</span> <span class="cn">NULL</span>,
@@ -119,7 +119,7 @@ Be very careful to not display such information in a script and add the .Renviro
 - Check that you added your credentials to the .Renviron file. Check that you use a plain Rmarkdown file (no {flexdashboard}, no {pagedown}).<br>
 - Try to find out what the specific problem is, notably by identifying what is <em>not</em> causing the problem.<br>
 - “Unplug and plug it back in”: restart R, close and reopen R.</p>
-<p>You can also submit an issue on Github if your question is directly related to the package {odsrmd}. Please indicate your version of R and of {odsrmd}, and provide a minimal version of the Rmarkdown document you would like to publish as a page on your platform.</p>
+<p>You can also <a href="https://github.com/opendatasoft/odsrmd/issues" class="external-link">submit an issue on Github</a> if your question is directly related to the package {odsrmd}. Please indicate your version of R and of {odsrmd}, and provide a minimal version of the Rmarkdown document you would like to publish as a page on your platform.</p>
 <p>Your question concerns your platform, your credentials etc? Please contact the Opendatasoft support or get in touch with your Customer Success Manager.</p>
 </div>
 <div class="section level2">
