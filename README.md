@@ -13,7 +13,8 @@ version](https://img.shields.io/github/r-package/v/opendatasoft/odsrmd?style=pla
 <!-- badges: end -->
 
 The goal of {odsrmd} is to give the possibility to R users to add
-Rmarkdown files as pages on an Opendatasoft platform. It knits an
+Rmarkdown files as pages on an
+[Opendatasoft](https://www.opendatasoft.com/) platform. It knits an
 Rmarkdown file to html, format it to JSON and send it via the
 [management
 API](https://help.opendatasoft.com/management-api/#introduction) on an
