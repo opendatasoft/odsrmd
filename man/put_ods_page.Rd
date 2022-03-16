@@ -26,11 +26,9 @@ file.copy(from = system.file("examples/example_rmd.Rmd", package = "odsrmd"), to
 file.copy(from = system.file("examples/style.css", package = "odsrmd"), to=dir_tmp)
 # browseURL(dir_tmp)
 path <- paste0(dir_tmp, "/example_rmd.Rmd")
-page_slug <- "testthat-odsrmd"
-
+page_slug <- "odsrmd-example"
 
 body_and_style <- get_body_and_style(path)
-
 
 page_elements <- get_ods_page(page_slug)
 
@@ -39,6 +37,4 @@ json_to_send <- create_json(page_elements, body_and_style, chosen_languages = c(
                         tags = NULL, restricted = NULL)
 
 put_ods_page(page_slug, json_to_send)
-
-
 }

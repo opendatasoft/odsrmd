@@ -14,8 +14,10 @@ version](https://img.shields.io/github/r-package/v/opendatasoft/odsrmd?style=pla
 
 The goal of {odsrmd} is to give the possibility to R users to add
 Rmarkdown files as pages on an Opendatasoft platform. It knits an
-Rmarkdown file to html, format it to JSON and send it via the management
-API on an Opendatasoft platform.  
+Rmarkdown file to html, format it to JSON and send it via the
+[management
+API](https://help.opendatasoft.com/management-api/#introduction) on an
+Opendatasoft platform.  
 Note that you cannot include scripts on a classic page from the
 Opendatasoft platform. Interactive libraries such as {plotly} or
 {highcharter} produce script nodes when the document is knitted to html.
@@ -25,7 +27,7 @@ display as a page on an Opendatasoft platform. For the same reasons,
 
 ## Installation
 
-You can install the development version of odsrmd like so:
+You can install the development version of {odsrmd} like so:
 
 ``` r
 # remotes::install_github("odsrmd")
@@ -59,10 +61,11 @@ usethis::use_git_ignore(ignores = ".Renviron")
 
 Here is a minimal example on how to use the {odsrmd} package.
 
-First, login on your Opendatasoft platform, go to the backoffice, create
-a classic page and write “test” as the page URL. Then, add your
-credentials and domain ID to the .Renviron file. Now run the example
-below.
+First, login on your Opendatasoft platform, go to the backoffice,
+[create a classic
+page](https://help.opendatasoft.com/platform/en/creating_content/01_creating_content_page/creating_page.html)
+and write “odsrmd-example” as the page URL. Then, add your credentials
+and domain ID to the .Renviron file. Now run the example below.
 
 ``` r
 library(odsrmd)
@@ -76,8 +79,8 @@ file.copy(from = system.file("examples/example_rmd.Rmd", package = "odsrmd"), to
 file.copy(from = system.file("examples/style.css", package = "odsrmd"), to=dir_tmp)
 path <- paste0(dir_tmp, "/example_rmd.Rmd")
 
-# Here the page to modify on the Opendatasoft platform is named "test"   
-page_slug <- "test"
+# Here the page to modify on the Opendatasoft platform is named "odsrmd-example"   
+page_slug <- "odsrmd-example"
 
 # Send elements to the page on the Opendatasoft platform
 update_ods_page(path, page_slug, add_extra_css = "no", chosen_languages = "all", title = NULL,
@@ -95,10 +98,11 @@ that you use a plain Rmarkdown file (no {flexdashboard}, no
 what is *not* causing the problem.  
 - “Unplug and plug it back in”: restart R, close and reopen R.
 
-You can also submit an issue on Github if your question is directly
-related to the package {odsrmd}. Please indicate your version of R and
-of {odsrmd}, and provide a minimal version of the Rmarkdown document you
-would like to publish as a page on your platform.
+You can also [submit an issue on
+Github](https://github.com/opendatasoft/odsrmd/issues) if your question
+is directly related to the package {odsrmd}. Please indicate your
+version of R and of {odsrmd}, and provide a minimal version of the
+Rmarkdown document you would like to publish as a page on your platform.
 
 Your question concerns your platform, your credentials etc? Please
 contact the Opendatasoft support or get in touch with your Customer

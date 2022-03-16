@@ -16,7 +16,7 @@ A list object containing the information from the page (title, description, tags
 Get the content of a classic page from an Opendatasoft platform.
 }
 \examples{
-page_slug <- "testthat-odsrmd" 
+page_slug <- "odsrmd-example" 
 page_elements <- get_ods_page(page_slug) 
 
 }

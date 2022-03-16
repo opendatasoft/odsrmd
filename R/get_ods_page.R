@@ -11,7 +11,7 @@
 #' 
 #' @export
 #' @examples
-#' page_slug <- "testthat-odsrmd" 
+#' page_slug <- "odsrmd-example" 
 #' page_elements <- get_ods_page(page_slug) 
 #' 
 get_ods_page <- function(page_slug) {
