@@ -12,6 +12,7 @@
 #' 
 #' @export
 #' @examples
+#' \dontrun{
 #' # Temporary directory for reproducible example
 #' dir_tmp <- tempfile(pattern = "proj-")
 #' dir.create(dir_tmp)
@@ -31,6 +32,7 @@
 #'                         tags = NULL, restricted = NULL)
 #' 
 #' put_ods_page(page_slug, json_to_send)
+#' }
 put_ods_page <- function(page_slug, json_to_send) {
   if (page_slug == "") {
     stop(

@@ -13,6 +13,7 @@
 #' 
 #' @export
 #' @examples
+#' \dontrun{
 #' # Temporary directory for reproducible example
 #' dir_tmp <- tempfile(pattern = "proj-")
 #' dir.create(dir_tmp)
@@ -26,6 +27,7 @@
 #' update_ods_page(path, page_slug, add_extra_css = "no", chosen_languages = "all", title = NULL,
 #'   description = NULL, tags = NULL, restricted = NULL
 #' )
+#' }
 update_ods_page <- function(path, page_slug, add_extra_css = "no", chosen_languages = "all", title = NULL,
                             description = NULL, tags = NULL, restricted = NULL){
 

@@ -39,6 +39,7 @@ If request is successful (i.e. the request was successfully performed and a resp
 All-in-one function to fill in and update an ODS page with the content of an Rmarkdown file.
 }
 \examples{
+\dontrun{
 # Temporary directory for reproducible example
 dir_tmp <- tempfile(pattern = "proj-")
 dir.create(dir_tmp)
@@ -52,4 +53,5 @@ page_slug <- "odsrmd-example"
 update_ods_page(path, page_slug, add_extra_css = "no", chosen_languages = "all", title = NULL,
   description = NULL, tags = NULL, restricted = NULL
 )
+}
 }

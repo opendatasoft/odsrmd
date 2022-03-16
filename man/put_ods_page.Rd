@@ -18,6 +18,7 @@ If request is successful (i.e. the request was successfully performed and a resp
 Send JSON element to a page from an Opendatasoft platform.
 }
 \examples{
+\dontrun{
 # Temporary directory for reproducible example
 dir_tmp <- tempfile(pattern = "proj-")
 dir.create(dir_tmp)
@@ -37,4 +38,5 @@ json_to_send <- create_json(page_elements, body_and_style, chosen_languages = c(
                         tags = NULL, restricted = NULL)
 
 put_ods_page(page_slug, json_to_send)
+}
 }
