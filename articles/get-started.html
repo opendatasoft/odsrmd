@@ -106,8 +106,10 @@ We also assume that you already created an empty classic page, for which the pag
 </h2>
 <p><code><a href="../reference/get_ods_page.html">get_ods_page()</a></code> gets all pre-existing information of the page, such as its title, description, tags and current content. If no other information is provided to <code><a href="../reference/create_json.html">create_json()</a></code>, elements collected by <code><a href="../reference/get_ods_page.html">get_ods_page()</a></code> will be re-used by<code><a href="../reference/create_json.html">create_json()</a></code> to create the JSON object that will be sent back on the Opendatasoft platform using the <code><a href="../reference/put_ods_page.html">put_ods_page()</a></code> function.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">page_slug</span> <span class="op">&lt;-</span> <span class="st">"odsrmd-example"</span> 
-<span class="va">page_elements</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_ods_page.html">get_ods_page</a></span><span class="op">(</span><span class="va">page_slug</span><span class="op">)</span> </code></pre></div>
+<code class="sourceCode R"><span class="co">#' \dontrun{</span>
+<span class="co">#' page_slug &lt;- "odsrmd-example" </span>
+<span class="co">#' page_elements &lt;- get_ods_page(page_slug) </span>
+<span class="co">#' }</span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="get_languages">get_languages<a class="anchor" aria-label="anchor" href="#get_languages"></a>
@@ -169,44 +171,48 @@ We also assume that you already created an empty classic page, for which the pag
 </h2>
 <p><code><a href="../reference/put_ods_page.html">put_ods_page()</a></code> updates the content of the page on the Opendatasoft platform with a JSON object coming from <code><a href="../reference/create_json.html">create_json()</a></code>. It sends back an HTTP response if the request is successful, otherwise it throws an error.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Temporary directory for reproducible example</span>
-<span class="va">dir_tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span>pattern <span class="op">=</span> <span class="st">"proj-"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create</a></span><span class="op">(</span><span class="va">dir_tmp</span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.copy</a></span><span class="op">(</span>from <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"examples/example_rmd.Rmd"</span>, package <span class="op">=</span> <span class="st">"odsrmd"</span><span class="op">)</span>, to<span class="op">=</span><span class="va">dir_tmp</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.copy</a></span><span class="op">(</span>from <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"examples/style.css"</span>, package <span class="op">=</span> <span class="st">"odsrmd"</span><span class="op">)</span>, to<span class="op">=</span><span class="va">dir_tmp</span><span class="op">)</span>
-<span class="co"># browseURL(dir_tmp)</span>
-<span class="va">path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">dir_tmp</span>, <span class="st">"/example_rmd.Rmd"</span><span class="op">)</span>
-<span class="va">page_slug</span> <span class="op">&lt;-</span> <span class="st">"odsrmd-example"</span>
-
-<span class="va">body_and_style</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_body_and_style.html">get_body_and_style</a></span><span class="op">(</span><span class="va">path</span><span class="op">)</span>
-
-<span class="va">page_elements</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_ods_page.html">get_ods_page</a></span><span class="op">(</span><span class="va">page_slug</span><span class="op">)</span>
-
-<span class="va">json_to_send</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/create_json.html">create_json</a></span><span class="op">(</span><span class="va">page_elements</span>, <span class="va">body_and_style</span>, chosen_languages <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"en"</span>, <span class="st">"fr"</span><span class="op">)</span>, 
-                        title <span class="op">=</span> <span class="st">"English title"</span>, description <span class="op">=</span> <span class="cn">NULL</span>,  
-                        tags <span class="op">=</span> <span class="cn">NULL</span>, restricted <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span>
-
-<span class="fu"><a href="../reference/put_ods_page.html">put_ods_page</a></span><span class="op">(</span><span class="va">page_slug</span>, <span class="va">json_to_send</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="co">#' \dontrun{</span>
+<span class="co">#' # Temporary directory for reproducible example</span>
+<span class="co">#' dir_tmp &lt;- tempfile(pattern = "proj-")</span>
+<span class="co">#' dir.create(dir_tmp)</span>
+<span class="co">#' </span>
+<span class="co">#' file.copy(from = system.file("examples/example_rmd.Rmd", package = "odsrmd"), to=dir_tmp)</span>
+<span class="co">#' file.copy(from = system.file("examples/style.css", package = "odsrmd"), to=dir_tmp)</span>
+<span class="co">#' # browseURL(dir_tmp)</span>
+<span class="co">#' path &lt;- paste0(dir_tmp, "/example_rmd.Rmd")</span>
+<span class="co">#' page_slug &lt;- "odsrmd-example"</span>
+<span class="co">#' </span>
+<span class="co">#' body_and_style &lt;- get_body_and_style(path)</span>
+<span class="co">#' </span>
+<span class="co">#' page_elements &lt;- get_ods_page(page_slug)</span>
+<span class="co">#' </span>
+<span class="co">#' json_to_send &lt;- create_json(page_elements, body_and_style, chosen_languages = c("en", "fr"), </span>
+<span class="co">#'                         title = "English title", description = NULL,  </span>
+<span class="co">#'                         tags = NULL, restricted = NULL)</span>
+<span class="co">#' </span>
+<span class="co">#' put_ods_page(page_slug, json_to_send)</span>
+<span class="co">#' }</span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="update_ods_page">update_ods_page<a class="anchor" aria-label="anchor" href="#update_ods_page"></a>
 </h2>
 <p><code><a href="../reference/update_ods_page.html">update_ods_page()</a></code> is an all-in-one function to fill in and update an ODS page with the content of an Rmarkdown file. It combines <code><a href="../reference/get_body_and_style.html">get_body_and_style()</a></code>, <code><a href="../reference/get_ods_page.html">get_ods_page()</a></code>, <code><a href="../reference/create_json.html">create_json()</a></code> and <code><a href="../reference/put_ods_page.html">put_ods_page()</a></code> in a single command line.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Temporary directory for reproducible example</span>
-<span class="va">dir_tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span>pattern <span class="op">=</span> <span class="st">"proj-"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create</a></span><span class="op">(</span><span class="va">dir_tmp</span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.copy</a></span><span class="op">(</span>from <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"examples/example_rmd.Rmd"</span>, package <span class="op">=</span> <span class="st">"odsrmd"</span><span class="op">)</span>, to <span class="op">=</span> <span class="va">dir_tmp</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.copy</a></span><span class="op">(</span>from <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"examples/style.css"</span>, package <span class="op">=</span> <span class="st">"odsrmd"</span><span class="op">)</span>, to<span class="op">=</span><span class="va">dir_tmp</span><span class="op">)</span>
-<span class="co"># browseURL(dir_tmp)</span>
-<span class="va">path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">dir_tmp</span>, <span class="st">"/example_rmd.Rmd"</span><span class="op">)</span>
-<span class="va">page_slug</span> <span class="op">&lt;-</span> <span class="st">"odsrmd-example"</span>
-
-<span class="fu"><a href="../reference/update_ods_page.html">update_ods_page</a></span><span class="op">(</span><span class="va">path</span>, <span class="va">page_slug</span>, add_extra_css <span class="op">=</span> <span class="st">"no"</span>, chosen_languages <span class="op">=</span> <span class="st">"all"</span>, title <span class="op">=</span> <span class="cn">NULL</span>,
-  description <span class="op">=</span> <span class="cn">NULL</span>, tags <span class="op">=</span> <span class="cn">NULL</span>, restricted <span class="op">=</span> <span class="cn">NULL</span>
-<span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="co">#' \dontrun{</span>
+<span class="co">#' # Temporary directory for reproducible example</span>
+<span class="co">#' dir_tmp &lt;- tempfile(pattern = "proj-")</span>
+<span class="co">#' dir.create(dir_tmp)</span>
+<span class="co">#' </span>
+<span class="co">#' file.copy(from = system.file("examples/example_rmd.Rmd", package = "odsrmd"), to = dir_tmp)</span>
+<span class="co">#' file.copy(from = system.file("examples/style.css", package = "odsrmd"), to=dir_tmp)</span>
+<span class="co">#' # browseURL(dir_tmp)</span>
+<span class="co">#' path &lt;- paste0(dir_tmp, "/example_rmd.Rmd")</span>
+<span class="co">#' page_slug &lt;- "odsrmd-example"</span>
+<span class="co">#' </span>
+<span class="co">#' update_ods_page(path, page_slug, add_extra_css = "no", chosen_languages = "all", title = NULL,</span>
+<span class="co">#'   description = NULL, tags = NULL, restricted = NULL</span>
+<span class="co">#' )</span>
+<span class="co">#' }</span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>

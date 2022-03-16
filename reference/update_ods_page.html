@@ -89,14 +89,13 @@
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># Temporary directory for reproducible example</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
+<span class="r-in"><span class="co"># Temporary directory for reproducible example</span></span>
 <span class="r-in"><span class="va">dir_tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span>pattern <span class="op">=</span> <span class="st">"proj-"</span><span class="op">)</span></span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create</a></span><span class="op">(</span><span class="va">dir_tmp</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.copy</a></span><span class="op">(</span>from <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"examples/example_rmd.Rmd"</span>, package <span class="op">=</span> <span class="st">"odsrmd"</span><span class="op">)</span>, to <span class="op">=</span> <span class="va">dir_tmp</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.copy</a></span><span class="op">(</span>from <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"examples/style.css"</span>, package <span class="op">=</span> <span class="st">"odsrmd"</span><span class="op">)</span>, to<span class="op">=</span><span class="va">dir_tmp</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-in"><span class="co"># browseURL(dir_tmp)</span></span>
 <span class="r-in"><span class="va">path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">dir_tmp</span>, <span class="st">"/example_rmd.Rmd"</span><span class="op">)</span></span>
 <span class="r-in"><span class="va">page_slug</span> <span class="op">&lt;-</span> <span class="st">"odsrmd-example"</span></span>
@@ -104,9 +103,7 @@
 <span class="r-in"><span class="fu">update_ods_page</span><span class="op">(</span><span class="va">path</span>, <span class="va">page_slug</span>, add_extra_css <span class="op">=</span> <span class="st">"no"</span>, chosen_languages <span class="op">=</span> <span class="st">"all"</span>, title <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span class="r-in">  description <span class="op">=</span> <span class="cn">NULL</span>, tags <span class="op">=</span> <span class="cn">NULL</span>, restricted <span class="op">=</span> <span class="cn">NULL</span></span>
 <span class="r-in"><span class="op">)</span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in get_ods_page(page_slug):</span> The domain identifier of the Opendatasoft platform is missing.</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> Please add the environmental variable ODS_DOMAIN_ID to your .Renviron file with the corresponding domain identifier.</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> Reminder, your domain identifier is part of your domain URL : https://your_domain_ID.opendatasoft.com/</span>
+<span class="r-in"><span class="op">}</span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
