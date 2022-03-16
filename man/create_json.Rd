@@ -44,12 +44,10 @@ file.copy(from = system.file("examples/example_rmd.Rmd", package = "odsrmd"), to
 file.copy(from = system.file("examples/style.css", package = "odsrmd"), to=dir_tmp)
 # browseURL(dir_tmp)
 path <- paste0(dir_tmp, "/example_rmd.Rmd")
-page_slug <- "testthat-odsrmd"
+body_and_style <- get_body_and_style(path, add_extra_css = "no")
 
-
-body_and_style <- get_body_and_style(path)
-
-page_elements <- get_ods_page(page_slug)
+file.copy(from = system.file("examples/page_elements_example", package = "odsrmd"), to = dir_tmp)
+page_elements <- readRDS(paste0(dir_tmp, "/page_elements_example"))
 
 json_to_send <- create_json(page_elements, body_and_style,
   chosen_languages = "all",

@@ -9,6 +9,7 @@ Authors@R: c(
 Description: Knit Rmarkdown and send html output on an OpenDataSoft
     platform. Request credentials to access the platform.
 License: MIT + file LICENSE
+URL: https://opendatasoft.github.io/odsrmd/
 Imports: 
     glue,
     httr2,
@@ -28,4 +29,3 @@ VignetteBuilder:
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2
-URL: https://opendatasoft.github.io/odsrmd/

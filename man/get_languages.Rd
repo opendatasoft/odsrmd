@@ -18,8 +18,12 @@ A vector of characters.
 Retrieve all languages available on the ODS platform from the information contained in page_elements.
 }
 \examples{
-page_slug <- "testthat-odsrmd"
-page_elements <- get_ods_page(page_slug) 
+# Temporary directory for reproducible example
+dir_tmp <- tempfile(pattern = "proj-")
+dir.create(dir_tmp)
+
+file.copy(from = system.file("examples/page_elements_example", package = "odsrmd"), to = dir_tmp)
+page_elements <- readRDS(paste0(dir_tmp, "/page_elements_example"))
 
 all_languages <- get_languages(page_elements)
 }

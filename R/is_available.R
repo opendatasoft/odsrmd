@@ -11,8 +11,12 @@
 #' 
 #' @export
 #' @examples
-#' page_slug <- "testthat-odsrmd" 
-#' page_elements <- get_ods_page(page_slug) 
+#' # Temporary directory for reproducible example
+#' dir_tmp <- tempfile(pattern = "proj-")
+#' dir.create(dir_tmp)
+#' 
+#' file.copy(from = system.file("examples/page_elements_example", package = "odsrmd"), to = dir_tmp)
+#' page_elements <- readRDS(paste0(dir_tmp, "/page_elements_example"))
 #' 
 #' is_available("EN", page_elements)
 is_available <- function(language, page_elements) {

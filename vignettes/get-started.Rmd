@@ -162,7 +162,7 @@ The get_ods_page() function gets all pre-existing information of the page, such 
 
   
 
-```{r example-get_ods_page}
+```{r example-get_ods_page, eval = FALSE}
 page_slug <- "testthat-odsrmd" 
 page_elements <- get_ods_page(page_slug) 
 
@@ -179,8 +179,12 @@ page_elements <- get_ods_page(page_slug)
   
 
 ```{r example-get_languages}
-page_slug <- "testthat-odsrmd"
-page_elements <- get_ods_page(page_slug) 
+# Temporary directory for reproducible example
+dir_tmp <- tempfile(pattern = "proj-")
+dir.create(dir_tmp)
+
+file.copy(from = system.file("examples/page_elements_example", package = "odsrmd"), to = dir_tmp)
+page_elements <- readRDS(paste0(dir_tmp, "/page_elements_example"))
 
 all_languages <- get_languages(page_elements)
 ```
@@ -197,8 +201,12 @@ all_languages <- get_languages(page_elements)
   
 
 ```{r example-is_available}
-page_slug <- "testthat-odsrmd" 
-page_elements <- get_ods_page(page_slug) 
+# Temporary directory for reproducible example
+dir_tmp <- tempfile(pattern = "proj-")
+dir.create(dir_tmp)
+
+file.copy(from = system.file("examples/page_elements_example", package = "odsrmd"), to = dir_tmp)
+page_elements <- readRDS(paste0(dir_tmp, "/page_elements_example"))
 
 is_available("EN", page_elements)
 ```
@@ -227,12 +235,10 @@ file.copy(from = system.file("examples/example_rmd.Rmd", package = "odsrmd"), to
 file.copy(from = system.file("examples/style.css", package = "odsrmd"), to=dir_tmp)
 # browseURL(dir_tmp)
 path <- paste0(dir_tmp, "/example_rmd.Rmd")
-page_slug <- "testthat-odsrmd"
+body_and_style <- get_body_and_style(path, add_extra_css = "no")
 
-
-body_and_style <- get_body_and_style(path)
-
-page_elements <- get_ods_page(page_slug)
+file.copy(from = system.file("examples/page_elements_example", package = "odsrmd"), to = dir_tmp)
+page_elements <- readRDS(paste0(dir_tmp, "/page_elements_example"))
 
 json_to_send <- create_json(page_elements, body_and_style,
   chosen_languages = "all",
@@ -252,7 +258,7 @@ put_ods_page() updates the content of the page on the Opendatasoft platform with
 
   
 
-```{r example-put_ods_page}
+```{r example-put_ods_page, eval = FALSE}
 # Temporary directory for reproducible example
 dir_tmp <- tempfile(pattern = "proj-")
 dir.create(dir_tmp)
@@ -288,7 +294,7 @@ put_ods_page(page_slug, json_to_send)
 
   
 
-```{r example-update_ods_page}
+```{r example-update_ods_page, eval = FALSE}
 # Temporary directory for reproducible example
 dir_tmp <- tempfile(pattern = "proj-")
 dir.create(dir_tmp)
